@@ -14,9 +14,15 @@ var spawn = require('child_process').spawn;
 var clean = require('gulp-clean');
 var taskAsync = require('./taskAsync');
 var Q = require('q');
+var scriptWrapper = require('./scriptWrapper');
 
-gulp.task('clean', function () {
-    return gulp.src([sourcePath + '/**/*.js', testPath + '/**/*.js', distPath + '/**/*.js'], { read: false })
+gulp.task('clean-src-and-test', function () {
+    return gulp.src([sourcePath + '/**/*.js', testPath + '/**/*.js', sourcePath + '/**/*.map', testPath + '/**/*.map'], { read: false })
+        .pipe(clean());
+});
+
+gulp.task('clean-build', function () {
+    return gulp.src([distPath + '/**/*.js'], { read: false })
         .pipe(clean());
 });
 
@@ -52,6 +58,7 @@ gulp.task('build-test-ts', function () {
 gulp.task('merge-src-js', function () {
     return gulp.src(sourcePath + '/**/*.js')
                 .pipe(concat(scriptName + '.js'))
+                .pipe(scriptWrapper.wrap())
                 .pipe(gulp.dest(distPath));
 });
 
@@ -69,7 +76,7 @@ gulp.task('check-js', function () {
 });
 
 gulp.task('dev', function () {
-    return taskAsync.runSequence(['clean', 'build-src-ts', 'build-test-ts']).then(function () {
+    return taskAsync.runSequence(['clean-src-and-test', 'build-src-ts', 'build-test-ts']).then(function () {
         var testTask = runClient(true);
         var buildAndCheckTask = gulp.watch([sourceFiles, testFiles], ['check-js', 'build-src-ts', 'build-test-ts']);
 
@@ -78,11 +85,11 @@ gulp.task('dev', function () {
 });
 
 gulp.task('build', function () {
-    return taskAsync.runSequence(['clean', 'build-src-ts', 'merge-src-js', 'min-src-js']);
+    return taskAsync.runSequence(['clean-src-and-test', 'clean-build', 'build-src-ts', 'merge-src-js', 'min-src-js']);
 });
 
 gulp.task('test', function () {
-    return taskAsync.runSequence(['clean', 'build-src-ts', 'build-test-ts']).then(function () {
+    return taskAsync.runSequence(['clean-src-and-test', 'build-src-ts', 'build-test-ts']).then(function () {
         return runClient();
     });
 });
