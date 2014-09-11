@@ -20,13 +20,17 @@
   <ItemGroup>
     <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
+    <Content Include="gulpfile.js" />
+    <Content Include="karma.conf.js" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="taskAsync.js" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <TypeScriptCompile Include="libs\chai.d.ts" />
+    <TypeScriptCompile Include="libs\jquery.d.ts" />
     <TypeScriptCompile Include="libs\mocha.d.ts" />
     <TypeScriptCompile Include="src\Utils.ts" />
     <TypeScriptCompile Include="tests\UtilsTest.ts" />
