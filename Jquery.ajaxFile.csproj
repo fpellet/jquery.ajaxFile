@@ -18,14 +18,18 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include=".gitattributes" />
+    <Content Include=".gitignore" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="libs\" />
-    <Folder Include="src\" />
-    <Folder Include="tests\" />
+    <TypeScriptCompile Include="libs\chai.d.ts" />
+    <TypeScriptCompile Include="libs\mocha.d.ts" />
+    <TypeScriptCompile Include="src\Utils.ts" />
+    <TypeScriptCompile Include="tests\UtilsTest.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
