@@ -5,14 +5,24 @@ var testPath = 'tests';
 var distPath = 'dist';
 var scriptName = 'jquery.ajaxFile';
 
+var typescriptConfiguration = {
+    module: '',
+    target: 'ES3',
+    sourcemap: true,
+    logErrors: true
+};
+
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var tsc = require('gulp-typescript-compiler');
 var spawn = require('child_process').spawn;
 var clean = require('gulp-clean');
-var taskAsync = require('./taskAsync');
 var Q = require('q');
+var plumber = require('gulp-plumber');
+var watch = require('gulp-watch');
+
+var taskAsync = require('./taskAsync');
 var scriptWrapper = require('./scriptWrapper');
 
 gulp.task('clean-src-and-test', function () {
@@ -37,12 +47,7 @@ var runClient = function (watch) {
 
 var compile = function(filesPattern, output) {
     return gulp.src([filesPattern])
-      .pipe(tsc({
-          module: '',
-          target: 'ES3',
-          sourcemap: true,
-          logErrors: true
-      }))
+      .pipe(tsc(typescriptConfiguration))
       .pipe(gulp.dest(output));
 };
 
@@ -68,12 +73,21 @@ gulp.task('min-src-js', function () {
                 .pipe(gulp.dest(distPath));
 });
 
-gulp.task('dev', function () {
-    return taskAsync.runSequence(['clean-src-and-test', 'build-src-ts', 'build-test-ts']).then(function () {
-        var testTask = runClient(true);
-        var buildTask = gulp.watch([sourceFiles, testFiles], ['build-src-ts', 'build-test-ts']);
+gulp.task('watch-build', function () {
+    watch(testFiles)
+        .pipe(plumber())
+        .pipe(tsc(typescriptConfiguration))
+        .pipe(gulp.dest(testPath));
 
-        return Q.all([testTask, buildTask]);
+    watch(sourceFiles)
+        .pipe(plumber())
+        .pipe(tsc(typescriptConfiguration))
+        .pipe(gulp.dest(sourcePath));
+});
+
+gulp.task('dev', function () {
+    return taskAsync.runSequence(['clean-src-and-test', 'build-src-ts', 'build-test-ts', 'watch-build']).then(function () {
+        return runClient(true);
     });
 });
 
