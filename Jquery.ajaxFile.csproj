@@ -34,8 +34,10 @@
     <TypeScriptCompile Include="libs\jquery.d.ts" />
     <TypeScriptCompile Include="libs\mocha.d.ts" />
     <TypeScriptCompile Include="src\AjaxFile.ts" />
+    <TypeScriptCompile Include="src\Option.ts" />
     <TypeScriptCompile Include="src\Url.ts" />
     <TypeScriptCompile Include="src\Utils.ts" />
+    <TypeScriptCompile Include="tests\OptionTest.ts" />
     <TypeScriptCompile Include="tests\UrlTest.ts" />
     <TypeScriptCompile Include="tests\UtilsTest.ts" />
   </ItemGroup>
