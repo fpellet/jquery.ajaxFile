@@ -7,7 +7,6 @@ var scriptName = 'jquery.ajaxFile';
 
 var gulp = require('gulp');
 var concat = require('gulp-concat');
-var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var tsc = require('gulp-typescript-compiler');
 var spawn = require('child_process').spawn;
@@ -69,18 +68,12 @@ gulp.task('min-src-js', function () {
                 .pipe(gulp.dest(distPath));
 });
 
-gulp.task('check-js', function () {
-    gulp.src([sourcePath + '/**/*.js', testPath + '/**/*.js'])
-      .pipe(jshint())
-      .pipe(jshint.reporter('default'));
-});
-
 gulp.task('dev', function () {
     return taskAsync.runSequence(['clean-src-and-test', 'build-src-ts', 'build-test-ts']).then(function () {
         var testTask = runClient(true);
-        var buildAndCheckTask = gulp.watch([sourceFiles, testFiles], ['check-js', 'build-src-ts', 'build-test-ts']);
+        var buildTask = gulp.watch([sourceFiles, testFiles], ['build-src-ts', 'build-test-ts']);
 
-        return Q.all([testTask, buildAndCheckTask]);
+        return Q.all([testTask, buildTask]);
     });
 });
 
