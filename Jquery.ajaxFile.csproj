@@ -22,6 +22,7 @@
     <Content Include=".gitignore" />
     <Content Include="gulpfile.js" />
     <Content Include="karma.conf.js" />
+    <Content Include="libs\jquery-1.11.1.js" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -33,7 +34,9 @@
     <TypeScriptCompile Include="libs\jquery.d.ts" />
     <TypeScriptCompile Include="libs\mocha.d.ts" />
     <TypeScriptCompile Include="src\AjaxFile.ts" />
+    <TypeScriptCompile Include="src\Url.ts" />
     <TypeScriptCompile Include="src\Utils.ts" />
+    <TypeScriptCompile Include="tests\UrlTest.ts" />
     <TypeScriptCompile Include="tests\UtilsTest.ts" />
   </ItemGroup>
   <PropertyGroup>
