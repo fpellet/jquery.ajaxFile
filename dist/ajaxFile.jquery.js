@@ -425,7 +425,7 @@ var ResponseDocument = (function () {
         var container = this.searchContainer();
 
         var status = extractStatus(container);
-        var data = parse(container.value, desiredDataType);
+        var data = parse(container.val(), desiredDataType);
 
         try  {
             if (status.isSuccess) {
@@ -444,7 +444,7 @@ var ResponseDocument = (function () {
             throw 'Cannot find textarea in response';
         }
 
-        return container;
+        return $(container);
     };
     return ResponseDocument;
 })();
@@ -457,9 +457,9 @@ var extractStatus = function (container) {
     };
 
     if (container) {
-        var code = Number(container.getAttribute('statusCode')) || status.code;
+        var code = Number(container.attr('statusCode')) || status.code;
         status.code = code;
-        status.text = container.getAttribute('statusText') || status.text;
+        status.text = container.attr('statusText') || status.text;
         status.isSuccess = code >= 200 && code < 300 || code === 304;
     }
     ;
