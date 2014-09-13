@@ -31,7 +31,7 @@
         var container = this.searchContainer();
 
         var status = extractStatus(container);
-        var data = parse(container.value, desiredDataType);
+        var data = parse(container.val(), desiredDataType);
 
         try {
             if (status.isSuccess) {
@@ -44,18 +44,18 @@
         }
     }
 
-    private searchContainer(): HTMLTextAreaElement {
+    private searchContainer(): JQuery {
         var container = this.document.getElementsByTagName('textarea')[0];
         if (!container) {
             throw 'Cannot find textarea in response';
         }
 
-        return container;
+        return $(container);
     }
 
 }
 
-var extractStatus = (container: any): IResponseStatus => {
+var extractStatus = (container: JQuery): IResponseStatus => {
     var status: IResponseStatus = {
         code: 200,
         text: '',
@@ -63,9 +63,9 @@ var extractStatus = (container: any): IResponseStatus => {
     };
 
     if (container) {
-        var code = Number(container.getAttribute('statusCode')) || status.code;
+        var code = Number(container.attr('statusCode')) || status.code;
         status.code = code;
-        status.text = container.getAttribute('statusText') || status.text;
+        status.text = container.attr('statusText') || status.text;
         status.isSuccess = code >= 200 && code < 300 || code === 304;
     };
 

@@ -48,6 +48,7 @@
     <TypeScriptCompile Include="src\Url.ts" />
     <TypeScriptCompile Include="src\Utils.ts" />
     <TypeScriptCompile Include="tests\OptionTest.ts" />
+    <TypeScriptCompile Include="tests\ResponseDocumentTest.ts" />
     <TypeScriptCompile Include="tests\UrlTest.ts" />
     <TypeScriptCompile Include="tests\UtilsTest.ts" />
   </ItemGroup>
