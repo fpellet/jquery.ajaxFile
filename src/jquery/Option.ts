@@ -18,6 +18,6 @@ var convertJqueryOptionToOption = (jqueryOption: IJqueryOption): IOption => {
         files: jqueryOption.files,
         desiredResponseDataType: convertToDataType(jqueryOption.dataType),
 
-        timeout: jqueryOption.timeout,
+        timeoutInSeconds: (jqueryOption.timeout || 0) * 10000,
     };
 };

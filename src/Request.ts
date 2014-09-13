@@ -23,8 +23,9 @@
 
         setTimeout(() => this.send(), 10);
 
-        if (this.option.timeout) {
-            this.timeoutHandle = setTimeout(() => this.onTimeout(), this.option.timeout);
+        if (this.option.timeoutInSeconds) {
+            var timeoutInMilliseconds = this.option.timeoutInSeconds * 1000;
+            this.timeoutHandle = setTimeout(() => this.onTimeout(), timeoutInMilliseconds);
         }
 
         return promise.always(() => this.dispose());

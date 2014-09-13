@@ -3,7 +3,7 @@
     files: [],
     desiredResponseDataType: DataType.Json,
     method: 'POST',
-    timeout: 60000
+    timeoutInSeconds: 60
 };
 
 var mergeWithDefaultOption = (option: IOption): IOption => {

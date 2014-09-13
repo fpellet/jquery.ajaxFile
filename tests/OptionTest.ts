@@ -29,15 +29,15 @@ describe("Option", () => {
         expect(result.files).to.eqls([]);
         expect(result.desiredResponseDataType).to.eqls(DataType.Json);
         expect(result.method).to.eqls('POST');
-        expect(result.timeout).to.eqls(60000);
+        expect(result.timeoutInSeconds).to.eqls(60);
     });
 
     it("When mergeWithDefaultOption Then use parameter in user option, then in default option", () => {
-        defaultOption.timeout = 6;
+        defaultOption.timeoutInSeconds = 6;
 
         var result = mergeWithDefaultOption({ desiredResponseDataType: DataType.Xml });
 
-        expect(result.timeout).to.eqls(6);
+        expect(result.timeoutInSeconds).to.eqls(6);
         expect(result.desiredResponseDataType).to.eqls(DataType.Xml);
     });
 }); 

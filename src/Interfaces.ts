@@ -17,7 +17,7 @@ interface IOption {
     files?: IFileData[];
     desiredResponseDataType?: DataType;
 
-    timeout?: number;
+    timeoutInSeconds?: number;
 }
 
 interface IResponseStatus {
