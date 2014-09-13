@@ -11,10 +11,22 @@
             deferred.resolve(result.data, result.status && result.status.text, xhr);
             eventTrigger.success(option, xhr);
         }).fail((result: IAjaxFileResult) => {
-                var xhr = generateJqueryXHR(result, queryOption, option, promise);
-                deferred.reject(xhr, result.status && result.status.text, result.error);
-                eventTrigger.error(option, xhr, result.error);
-            });
+            var xhr = generateJqueryXHR(result, queryOption, option, promise);
+            deferred.reject(xhr, result.status && result.status.text, result.error);
+            eventTrigger.error(option, xhr, result.error);
+        });
+
+        if (queryOption.error) {
+            deferred.fail(queryOption.error);
+        }
+
+        if (queryOption.success) {
+            deferred.done(queryOption.success);
+        }
+
+        if (queryOption.complete) {
+            deferred.always(queryOption.complete);
+        }
 
         return deferred;
     };

@@ -585,6 +585,18 @@ var AjaxFileJQuery;
             eventTrigger.error(option, xhr, result.error);
         });
 
+        if (queryOption.error) {
+            deferred.fail(queryOption.error);
+        }
+
+        if (queryOption.success) {
+            deferred.done(queryOption.success);
+        }
+
+        if (queryOption.complete) {
+            deferred.always(queryOption.complete);
+        }
+
         return deferred;
     };
 
