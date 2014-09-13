@@ -11,12 +11,13 @@ var preScript = "(function (factory) {" + "\r\n" +
                     "if (typeof define === 'function' && define.amd) {" + "\r\n" +
                     "    define(['jquery'], factory);" + "\r\n" +
                     "} else {" + "\r\n" +
-                    "    factory( (typeof(jQuery) != 'undefined') ? jQuery : window.Zepto );" + "\r\n" +
+                    "    window.AjaxFile = factory( (typeof(jQuery) != 'undefined') ? jQuery : window.Zepto );" + "\r\n" +
                     "}" + "\r\n" +
                 "} (function ($) {" + "\r\n" +
                 "    \"use strict\";" + "\r\n";
 
-var postScript = "\r\n$.fn.ajaxFile = ajaxFile;" + "\r\n" +
+var postScript = "\r\n" +
+                 "return AjaxFile;" + "\r\n" +
                  "}));";
 
 module.exports.wrap = function () {

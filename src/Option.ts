@@ -1,37 +1,13 @@
-﻿/// <reference path="../libs/jquery.d.ts" />
-/// <reference path="url.ts" />
-
-interface IFileData {
-    name: string;
-    element: HTMLInputElement;
-}
-
-interface IAjaxFileOption {
-    type?: string;
-    url?: string;
-
-    data?: any;
-    files?: IFileData[];
-    dataType?: string;
-
-    timeout?: number;
-
-    error? (jqXHR: JQueryXHR, textStatus: string, errorThrown: string): any;
-    success? (data: any, textStatus: string, jqXHR: JQueryXHR): any;
-    complete? (jqXHR: JQueryXHR, textStatus: string): any;
-
-    global?: boolean;
-}
-
-var defaultOption: IAjaxFileOption = {
+﻿var defaultOption: IOption = {
     data: {},
     files: [],
-    dataType: "json",
-    type: 'POST'
+    desiredResponseDataType: DataType.Json,
+    method: 'POST',
+    timeout: 60000
 };
 
-var mergeWithDefaultOption = (option: IAjaxFileOption): IAjaxFileOption => {
-    option = $.extend(true, {}, $.ajaxSettings, defaultOption, option);
+var mergeWithDefaultOption = (option: IOption): IOption => {
+    option = $.extend(true, {}, defaultOption, option);
 
     if (!option.url) {
         option.url = getCurrentUrlWithoutHash();

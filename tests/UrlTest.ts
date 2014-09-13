@@ -47,7 +47,7 @@ describe("Url", () => {
     });
 
     it("When call extractParameters with object then return parameters list for form inputs", () => {
-        var result = extractParameters({
+        var result = JsonToPostDataConverter.convert({
             name: 'joe',
             data: {
                 age: 5,
@@ -62,7 +62,7 @@ describe("Url", () => {
     });
 
     it("When call extractParameters with collection then return parameters list for form inputs", () => {
-        var result = extractParameters({
+        var result = JsonToPostDataConverter.convert({
             name: 'joe',
             list: [
                 { label: 'bob', size: 5 },
@@ -78,21 +78,27 @@ describe("Url", () => {
     });
 
     it("When call extractParameters with special char then return parameters list for form inputs", () => {
-        var result = extractParameters({
-            value1: 'joé',
+        var result = JsonToPostDataConverter.convert({
+            value1: 'joÃ©',
             value2: 'jo"',
             value3: '<joe />',
         });
 
         expect(result).to.have.length(3);
-        expect(result[0]).to.deep.include({ name: 'value1', value: 'joé' });
+        expect(result[0]).to.deep.include({ name: 'value1', value: 'joÃ©' });
         expect(result[1]).to.deep.include({ name: 'value2', value: 'jo"' });
         expect(result[2]).to.deep.include({ name: 'value3', value: '<joe />' });
     });
 
     it("When call extractParameters with no data then return empty parameters list", () => {
-        var result = extractParameters({});
+        var result = JsonToPostDataConverter.convert({});
 
         expect(result).to.have.length(0); 
+    });
+
+    it("When call extractParameters with empty data then return empty parameters list", () => {
+        var result = JsonToPostDataConverter.convert({ value: '' });
+
+        expect(result).to.have.length(0);
     });
 });

@@ -1,6 +1,4 @@
 ﻿/// <reference path="utils.ts" />
-/// <reference path="../libs/jquery.d.ts" />
-
 var getCurrentUrlWithoutHash = (): string => {
     var currentUrl = window.location.href;
     return (currentUrl.match(/^([^#]+)/) || [])[1];
@@ -10,22 +8,50 @@ var currentPageIsHttpsMode = (): boolean => urlIsHttpsMode(window.location.href)
 
 var urlIsHttpsMode = (url: string): boolean => /^https/i.test(url || '');
 
-interface IData {
-    name: string;
-    value: string;
-}
-
-var decodeUriParameter = (value: string) : string => {
-    return decodeURIComponent(value.replace(/\+/g, ' '));
-}
-
-var extractParameters = (data: any): IData[]=> {
-    if (!data || Object.keys(data).length == 0) {
-        return [];
+module JsonToPostDataConverter {
+    export interface IData {
+        name: string;
+        value: string;
     }
 
-    return map($.param(data).split('&'), (parameter) => {
-        var element = parameter.split("=");
-        return { name: decodeUriParameter(element[0]), value: decodeUriParameter(element[1]) };
-    });
-};
+    var pushParameters = (results: IData[], data: any, prefix?: string) => {
+        if (!data) {
+            return;
+        }
+
+        for (var propertyName in data) {
+            var value = data[propertyName];
+            if(!value) continue;
+
+            pushParameterOfProperty(results, propertyName, data[propertyName], prefix);
+        }
+    };
+
+    var pushParameterOfProperty = (results: IData[], propertyName: string, value: any, prefix?: string) => {
+        var parameterName = prefix ? prefix + '[' + propertyName + ']' : propertyName;
+
+        var type = Object.prototype.toString.call(value);
+
+        if (type === '[object Array]') {
+            value.forEach((item, index) => {
+                pushParameters(results, item, parameterName + '[' + index + ']');
+            });
+            return;
+        }
+
+        if (type == '[object Object]') {
+            pushParameters(results, value, parameterName);
+            return;
+        }
+
+        results.push({ name: parameterName, value: value + '' });
+    };
+
+    export var convert = (data: any): IData[]=> {
+        var result = [];
+
+        pushParameters(result, data);
+
+        return result;
+    };
+}

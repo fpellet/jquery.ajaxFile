@@ -27,26 +27,17 @@ describe("Option", () => {
 
         expect(result.data).to.eqls({});
         expect(result.files).to.eqls([]);
-        expect(result.dataType).to.eqls('json');
-        expect(result.type).to.eqls('POST');
+        expect(result.desiredResponseDataType).to.eqls(DataType.Json);
+        expect(result.method).to.eqls('POST');
+        expect(result.timeout).to.eqls(60000);
     });
 
-    it("When mergeWithDefaultOption with empty option Then use jquery default option", () => {
-        $.ajaxSettings.timeout = 5;
-
-        var result = mergeWithDefaultOption({});
-
-        expect(result.global).to.eqls(true);
-        expect(result.timeout).to.eqls(5);
-    });
-
-    it("When mergeWithDefaultOption Then use default parameter in user option, then in default option, then in jquery option", () => {
-        $.ajaxSettings.timeout = 5;
+    it("When mergeWithDefaultOption Then use parameter in user option, then in default option", () => {
         defaultOption.timeout = 6;
 
-        var result = mergeWithDefaultOption({ dataType: 'xml' });
+        var result = mergeWithDefaultOption({ desiredResponseDataType: DataType.Xml });
 
         expect(result.timeout).to.eqls(6);
-        expect(result.dataType).to.eqls('xml');
+        expect(result.desiredResponseDataType).to.eqls(DataType.Xml);
     });
 }); 
