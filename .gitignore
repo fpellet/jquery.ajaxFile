@@ -8,6 +8,9 @@ src/*.js
 src/*.map
 tests/*.js
 tests/*.map
+Demo/Jquery.AjaxFile.Demo/Jquery.AjaxFile.Demo.Runner/Content
+Demo/Jquery.AjaxFile.Demo/Jquery.AjaxFile.Demo.Runner/Views
+Demo/Jquery.AjaxFile.Demo/packages/
 
 # User-specific files
 *.suo
