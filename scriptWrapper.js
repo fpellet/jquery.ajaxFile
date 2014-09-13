@@ -3,7 +3,7 @@
 var es = require('event-stream');
 
 var licence = "/*!" + "\r\n" +
-    " * jQuery AjaxFile Plugin" + "\r\n" +
+    " * AjaxFile.js" + "\r\n" +
     " * Project repository: https://github.com/fpellet/jquery.ajaxFile" + "\r\n" +
     " * Licensed under the MIT license" + "\r\n" +
     " */" + "\r\n";
