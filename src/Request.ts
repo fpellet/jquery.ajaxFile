@@ -1,18 +1,23 @@
-﻿class Request {
+﻿var generateRequestId = (): string => 'ajaxFile' + (new Date().getTime());
+
+class Request {
     private option: IOption;
     private form: Form.IForm;
-    private timeoutHandle: number;
     private isCompleted: boolean;
+    private responseHandler: IReponseHandler;
+    private id: string;
 
     private successCallback : IAjaxFileResultCallback;
     private errorCallback: IAjaxFileResultCallback;
 
     constructor(option: IOption) {
         this.option = option;
+        this.id = generateRequestId();
+        this.responseHandler = new ReponseHandlerDispatcher(this.id);
     }
 
     initialize() {
-        this.form = Form.createForm(this.option);
+        this.form = Form.createForm(this.option, this.id);
     }
 
     submit(): IAjaxFilePromise {
@@ -23,11 +28,6 @@
 
         setTimeout(() => this.send(), 10);
 
-        if (this.option.timeoutInSeconds) {
-            var timeoutInMilliseconds = this.option.timeoutInSeconds * 1000;
-            this.timeoutHandle = setTimeout(() => this.onTimeout(), timeoutInMilliseconds);
-        }
-
         return promise.always(() => this.dispose());
     }
 
@@ -36,31 +36,28 @@
             return;
         }
 
+        this.responseHandler.onReceived(this.option, this.form, (response) => this.onResponseReceived(response));
+
         try {
-            this.form.submit(() => this.onStateUpdated());
+            this.form.submit();
         } catch (err) {
             this.onError('error', err);
         }
     }
 
-    private onStateUpdated() {
+    private onResponseReceived(response: IResponseDocument) {
         if (this.isCompleted) {
             return;
         }
 
         try {
-            var documentOfIFrame = this.form.getResponseDocument();
-            if (!documentOfIFrame) {
-                this.abord('server abort');
-                return;
-            }
+            var result = response.read(this.option.desiredResponseDataType);
 
-            if (!documentOfIFrame.isLoaded()) {
-                setTimeout(() => this.onStateUpdated(), 250);
-                return;
+            if (result.status.isSuccess) {
+                this.successCallback(result);
+            } else {
+                this.errorCallback(result);
             }
-
-            documentOfIFrame.readResponse(this.option.desiredResponseDataType, this.successCallback, this.errorCallback);
         } catch (error) {
             this.onError('error', error);
         }
@@ -68,11 +65,11 @@
         this.isCompleted = true;
     }
 
-    private onTimeout() {
-        this.abord('timeout');
+    abord(reason?: string) {
+        this.onError(reason || 'cancelled');
     }
 
-    abord(reason?: string) {
+    private onError(error: any, status?: IResponseStatus, data?: any) {
         if (this.isCompleted) {
             return;
         }
@@ -80,12 +77,7 @@
 
         this.form.abord();
 
-        this.onError(reason || 'cancelled');
-    }
-
-    private onError(error: any, status?: IResponseStatus, data?: any) {
         this.errorCallback({ status: status, data: data, error: error });
-        this.dispose();
     }
 
     dispose() {
@@ -96,9 +88,9 @@
             this.form = null;
         }
 
-        if (this.timeoutHandle) {
-            clearTimeout(this.timeoutHandle);
-            this.timeoutHandle = null;
+        if (this.responseHandler) {
+            this.responseHandler.dispose();
+            this.responseHandler = null;
         }
     }
 }

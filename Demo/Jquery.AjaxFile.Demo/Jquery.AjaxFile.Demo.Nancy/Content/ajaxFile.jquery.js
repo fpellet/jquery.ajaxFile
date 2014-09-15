@@ -68,28 +68,87 @@ var AjaxFilePromise = (function () {
 })();
 //# sourceMappingURL=AjaxFilePromise.js.map
 
+var readCookie = function (name) {
+    var value = (document.cookie.match('(^|; )' + name + '=([^;]*)') || 0)[2];
+
+    return decodeURIComponent(value) || null;
+};
+
+var hasCookie = function (name) {
+    return document.cookie.indexOf(name + "=") != -1;
+};
+
+var clearCookie = function (name) {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+};
+
+var CookieReponseHandler = (function () {
+    function CookieReponseHandler(id) {
+        this.cookieName = id;
+    }
+    CookieReponseHandler.prototype.onReceived = function (option, form, receivedCallback) {
+        var _this = this;
+        this.receivedCallback = receivedCallback;
+
+        setTimeout(function () {
+            return _this.checkCookie();
+        }, 100);
+    };
+
+    CookieReponseHandler.prototype.checkCookie = function () {
+        var _this = this;
+        if (this.disposed) {
+            return;
+        }
+
+        if (!hasCookie(this.cookieName)) {
+            setTimeout(function () {
+                return _this.checkCookie();
+            }, 100);
+            return;
+        }
+
+        var value = readCookie(this.cookieName);
+
+        var response = createCookieResponseDocument(value);
+        this.receivedCallback(response);
+    };
+
+    CookieReponseHandler.prototype.dispose = function () {
+        this.disposed = true;
+
+        clearCookie(this.cookieName);
+        this.receivedCallback = null;
+    };
+    return CookieReponseHandler;
+})();
+//# sourceMappingURL=CookieReponseHandler.js.map
+
 var Form;
 (function (_Form) {
     var Form = (function () {
         function Form(option) {
             this.option = option;
         }
-        Form.prototype.initialize = function () {
-            this.formFragment = createFormFragment(this.option);
-            this.htmlHack = insertFormFragment(this.formFragment.fragment);
+        Form.prototype.initialize = function (requestId) {
+            this.addRequestIdInData(requestId);
+
+            this.formFragment = createFormFragment(this.option, requestId);
+            insertFormFragment(this.formFragment);
         };
 
-        Form.prototype.submit = function (loadCallback) {
+        Form.prototype.addRequestIdInData = function (requestId) {
+            this.option.data.__requestId = requestId;
+        };
+
+        Form.prototype.onLoaded = function (loadCallback) {
             var iframe = this.formFragment.iframe;
 
             iframe.on('load', loadCallback);
-
-            this.formFragment.form.submit();
         };
 
-        Form.prototype.isUninitialized = function () {
-            var state = getDocumentOfIFrame(this.formFragment.iframe).readyState;
-            return state && state.toLowerCase() == 'uninitialized';
+        Form.prototype.submit = function () {
+            this.formFragment.form.submit();
         };
 
         Form.prototype.getResponseDocument = function () {
@@ -99,7 +158,7 @@ var Form;
             }
 
             var orgineUrl = this.formFragment.iframe.attr('origineSrc');
-            return new ResponseDocument(document, orgineUrl);
+            return new FormResponseDocument(document, orgineUrl);
         };
 
         Form.prototype.abord = function () {
@@ -107,13 +166,11 @@ var Form;
         };
 
         Form.prototype.dispose = function () {
-            if (this.htmlHack) {
-                $(this.htmlHack).remove();
-                this.htmlHack = null;
-            }
+            if (this.formFragment) {
+                this.formFragment.container.remove();
 
-            this.formFragment = null;
-            this.option = null;
+                this.formFragment = null;
+            }
         };
         return Form;
     })();
@@ -131,25 +188,21 @@ var Form;
         $iframe.attr('src', $iframe.attr('origineSrc'));
     };
 
-    var createFormFragment = function (option) {
-        var fragment = document.createDocumentFragment();
-
-        var frameId = generateIFrameId();
-        var iframe = createIFrame(frameId, currentPageIsHttpsMode());
-        var form = createHtmlForm(option, frameId);
+    var createFormFragment = function (option, requestId) {
+        option.data.__requestId = requestId;
+        var iframe = createIFrame(requestId, currentPageIsHttpsMode());
+        var form = createHtmlForm(option, requestId);
 
         var container = $('<div></div>');
         container.hide();
         container.append(iframe);
         container.append(form);
 
-        fragment.appendChild(container[0]);
-
-        return { fragment: fragment, form: form, iframe: iframe };
+        return { container: container, form: form, iframe: iframe };
     };
 
-    var insertFormFragment = function (fragment) {
-        return document.getElementsByTagName('body')[0].appendChild(fragment);
+    var insertFormFragment = function (formFragment) {
+        formFragment.container.appendTo('body');
     };
 
     var getDocumentOfIFrame = function ($iframe) {
@@ -169,10 +222,6 @@ var Form;
         }
 
         return iframe.document;
-    };
-
-    var generateIFrameId = function () {
-        return 'jqFormIO' + (new Date().getTime());
     };
 
     var createIFrame = function (id, isHttps) {
@@ -247,14 +296,61 @@ var Form;
         return form;
     };
 
-    _Form.createForm = function (option) {
+    _Form.createForm = function (option, requestId) {
         var form = new Form(option);
-        form.initialize();
+        form.initialize(requestId);
 
         return form;
     };
 })(Form || (Form = {}));
 //# sourceMappingURL=Form.js.map
+
+var FormResponseHandler = (function () {
+    function FormResponseHandler() {
+    }
+    FormResponseHandler.prototype.onReceived = function (option, form, receivedCallback) {
+        var _this = this;
+        this.form = form;
+        this.form.onLoaded(function () {
+            return _this.onStateUpdated();
+        });
+
+        this.receivedCallback = receivedCallback;
+    };
+
+    FormResponseHandler.prototype.onStateUpdated = function () {
+        var _this = this;
+        try  {
+            var documentOfIFrame = this.form.getResponseDocument();
+            if (!documentOfIFrame) {
+                this.receivedCallback(createErrorResponseDocument('server abort'));
+                return;
+            }
+
+            if (!documentOfIFrame.isLoaded()) {
+                setTimeout(function () {
+                    return _this.onStateUpdated();
+                }, 250);
+                return;
+            }
+
+            this.receivedCallback(documentOfIFrame);
+        } catch (error) {
+            this.receivedCallback(createErrorResponseDocument(error));
+        }
+    };
+
+    FormResponseHandler.prototype.dispose = function () {
+        if (this.form) {
+            this.form.dispose();
+            this.form = null;
+        }
+
+        this.receivedCallback = null;
+    };
+    return FormResponseHandler;
+})();
+//# sourceMappingURL=FormResponseHandler.js.map
 
 var DataType;
 (function (DataType) {
@@ -283,12 +379,42 @@ var mergeWithDefaultOption = function (option) {
 };
 //# sourceMappingURL=Option.js.map
 
+var ReponseHandlerDispatcher = (function () {
+    function ReponseHandlerDispatcher(id) {
+        var cookieHandler = new CookieReponseHandler(id);
+        this.handlers = [
+            new TimeoutResponseHandler(),
+            new FormResponseHandler(),
+            cookieHandler
+        ];
+    }
+    ReponseHandlerDispatcher.prototype.onReceived = function (option, form, receivedCallback) {
+        this.handlers.forEach(function (handler) {
+            handler.onReceived(option, form, receivedCallback);
+        });
+    };
+
+    ReponseHandlerDispatcher.prototype.dispose = function () {
+        this.handlers.forEach(function (handler) {
+            handler.dispose();
+        });
+    };
+    return ReponseHandlerDispatcher;
+})();
+//# sourceMappingURL=ReponseHandlerDispatcher.js.map
+
+var generateRequestId = function () {
+    return 'ajaxFile' + (new Date().getTime());
+};
+
 var Request = (function () {
     function Request(option) {
         this.option = option;
+        this.id = generateRequestId();
+        this.responseHandler = new ReponseHandlerDispatcher(this.id);
     }
     Request.prototype.initialize = function () {
-        this.form = Form.createForm(this.option);
+        this.form = Form.createForm(this.option, this.id);
     };
 
     Request.prototype.submit = function () {
@@ -304,13 +430,6 @@ var Request = (function () {
             return _this.send();
         }, 10);
 
-        if (this.option.timeoutInSeconds) {
-            var timeoutInMilliseconds = this.option.timeoutInSeconds * 1000;
-            this.timeoutHandle = setTimeout(function () {
-                return _this.onTimeout();
-            }, timeoutInMilliseconds);
-        }
-
         return promise.always(function () {
             return _this.dispose();
         });
@@ -322,36 +441,30 @@ var Request = (function () {
             return;
         }
 
+        this.responseHandler.onReceived(this.option, this.form, function (response) {
+            return _this.onResponseReceived(response);
+        });
+
         try  {
-            this.form.submit(function () {
-                return _this.onStateUpdated();
-            });
+            this.form.submit();
         } catch (err) {
             this.onError('error', err);
         }
     };
 
-    Request.prototype.onStateUpdated = function () {
-        var _this = this;
+    Request.prototype.onResponseReceived = function (response) {
         if (this.isCompleted) {
             return;
         }
 
         try  {
-            var documentOfIFrame = this.form.getResponseDocument();
-            if (!documentOfIFrame) {
-                this.abord('server abort');
-                return;
-            }
+            var result = response.read(this.option.desiredResponseDataType);
 
-            if (!documentOfIFrame.isLoaded()) {
-                setTimeout(function () {
-                    return _this.onStateUpdated();
-                }, 250);
-                return;
+            if (result.status.isSuccess) {
+                this.successCallback(result);
+            } else {
+                this.errorCallback(result);
             }
-
-            documentOfIFrame.readResponse(this.option.desiredResponseDataType, this.successCallback, this.errorCallback);
         } catch (error) {
             this.onError('error', error);
         }
@@ -359,11 +472,11 @@ var Request = (function () {
         this.isCompleted = true;
     };
 
-    Request.prototype.onTimeout = function () {
-        this.abord('timeout');
+    Request.prototype.abord = function (reason) {
+        this.onError(reason || 'cancelled');
     };
 
-    Request.prototype.abord = function (reason) {
+    Request.prototype.onError = function (error, status, data) {
         if (this.isCompleted) {
             return;
         }
@@ -371,12 +484,7 @@ var Request = (function () {
 
         this.form.abord();
 
-        this.onError(reason || 'cancelled');
-    };
-
-    Request.prototype.onError = function (error, status, data) {
         this.errorCallback({ status: status, data: data, error: error });
-        this.dispose();
     };
 
     Request.prototype.dispose = function () {
@@ -387,21 +495,39 @@ var Request = (function () {
             this.form = null;
         }
 
-        if (this.timeoutHandle) {
-            clearTimeout(this.timeoutHandle);
-            this.timeoutHandle = null;
+        if (this.responseHandler) {
+            this.responseHandler.dispose();
+            this.responseHandler = null;
         }
     };
     return Request;
 })();
 //# sourceMappingURL=Request.js.map
 
-var ResponseDocument = (function () {
-    function ResponseDocument(document, origineUrl) {
+var createErrorResponseDocument = function (error) {
+    return {
+        read: function () {
+            throw error;
+        }
+    };
+};
+
+var createCookieResponseDocument = function (value) {
+    return {
+        read: function (desiredDataType) {
+            var data = parse(value, desiredDataType);
+
+            return { status: extractStatus(), data: data };
+        }
+    };
+};
+
+var FormResponseDocument = (function () {
+    function FormResponseDocument(document, origineUrl) {
         this.document = document;
         this.origineUrl = origineUrl;
     }
-    ResponseDocument.prototype.isLoaded = function () {
+    FormResponseDocument.prototype.isLoaded = function () {
         if (!this.hrefHasChanged()) {
             return false;
         }
@@ -413,32 +539,24 @@ var ResponseDocument = (function () {
         return this.document.body !== null && !!this.document.body.innerHTML;
     };
 
-    ResponseDocument.prototype.hrefHasChanged = function () {
+    FormResponseDocument.prototype.hrefHasChanged = function () {
         return this.document.location.href != this.origineUrl;
     };
 
-    ResponseDocument.prototype.isXml = function () {
+    FormResponseDocument.prototype.isXml = function () {
         return this.document.XMLDocument || $.isXMLDoc(this.document);
     };
 
-    ResponseDocument.prototype.readResponse = function (desiredDataType, onSuccess, onError) {
+    FormResponseDocument.prototype.read = function (desiredDataType) {
         var container = this.searchContainer();
 
         var status = extractStatus(container);
         var data = parse(container.val(), desiredDataType);
 
-        try  {
-            if (status.isSuccess) {
-                onSuccess({ status: status, data: data });
-            } else {
-                onError({ status: status, data: data, error: 'server error' });
-            }
-        } catch (e) {
-            onError({ status: status, data: data, error: e });
-        }
+        return { status: status, data: data };
     };
 
-    ResponseDocument.prototype.searchContainer = function () {
+    FormResponseDocument.prototype.searchContainer = function () {
         var container = this.document.getElementsByTagName('textarea')[0];
         if (!container) {
             throw 'Cannot find textarea in response';
@@ -446,13 +564,13 @@ var ResponseDocument = (function () {
 
         return $(container);
     };
-    return ResponseDocument;
+    return FormResponseDocument;
 })();
 
 var extractStatus = function (container) {
     var status = {
         code: 200,
-        text: '',
+        text: 'OK',
         isSuccess: true
     };
 
@@ -468,6 +586,10 @@ var extractStatus = function (container) {
 };
 
 var parse = function (value, desiredDataType) {
+    if (!value) {
+        return null;
+    }
+
     if (desiredDataType == DataType.Text) {
         return value;
     }
@@ -488,6 +610,30 @@ var parse = function (value, desiredDataType) {
     throw 'Invalid datatype : ' + desiredDataType;
 };
 //# sourceMappingURL=ResponseDocument.js.map
+
+var TimeoutResponseHandler = (function () {
+    function TimeoutResponseHandler() {
+    }
+    TimeoutResponseHandler.prototype.onReceived = function (option, form, receivedCallback) {
+        this.dispose();
+
+        if (option.timeoutInSeconds) {
+            var timeoutInMilliseconds = option.timeoutInSeconds * 1000;
+            this.timeoutHandle = setTimeout(function () {
+                receivedCallback(createErrorResponseDocument('Timeout'));
+            }, timeoutInMilliseconds);
+        }
+    };
+
+    TimeoutResponseHandler.prototype.dispose = function () {
+        if (this.timeoutHandle) {
+            clearTimeout(this.timeoutHandle);
+            this.timeoutHandle = null;
+        }
+    };
+    return TimeoutResponseHandler;
+})();
+//# sourceMappingURL=TimeoutResponseHandler.js.map
 
 /// <reference path="utils.ts" />
 var getCurrentUrlWithoutHash = function () {
@@ -564,6 +710,14 @@ var map = function (data, callback) {
 
     return result;
 };
+
+if (!Array.prototype.forEach) {
+    Array.prototype.forEach = function (fn, scope) {
+        for (var i = 0, len = this.length; i < len; ++i) {
+            fn.call(scope, this[i], i, this);
+        }
+    };
+}
 //# sourceMappingURL=Utils.js.map
 
 var AjaxFileJQuery;

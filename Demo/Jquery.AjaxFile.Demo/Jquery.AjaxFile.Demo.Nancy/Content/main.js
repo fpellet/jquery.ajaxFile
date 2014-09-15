@@ -55,7 +55,15 @@
         };
 
         this.sendFileToNancy = function(file) {
-            return sendFile(file, '/file');
+            return sendFile(file, '/sendFile');
+        };
+
+        this.downloadFileToNancy = function (file) {
+            return sendFile(file, '/downloadFile');
+        };
+
+        this.downloadFileToNancyWithError = function (file) {
+            return sendFile(file, '/downloadFileWithError');
         };
     };
 
@@ -91,6 +99,14 @@
 
         rthis.sendFileToNancy = function () {
             processRequest('sendFileToNancy');
+        };
+
+        rthis.downloadFileToNancy = function () {
+            processRequest('downloadFileToNancy');
+        };
+
+        rthis.downloadFileToNancyWithError = function () {
+            processRequest('downloadFileToNancyWithError');
         };
     };
 

@@ -1,4 +1,26 @@
-﻿class ResponseDocument {
+﻿interface IResponseDocument {
+    read(desiredDataType: DataType) : IAjaxFileResult;
+}
+
+var createErrorResponseDocument = (error: string): IResponseDocument => {
+    return {
+        read: (): IAjaxFileResult => {
+            throw error;
+        }
+    };
+};
+
+var createCookieResponseDocument = (value: string): IResponseDocument => {
+    return {
+        read(desiredDataType: DataType) {
+            var data = parse(value, desiredDataType);
+
+            return { status: extractStatus(), data: data };
+        }
+    };
+};
+
+class FormResponseDocument {
     private document: any;
     private origineUrl: string;
 
@@ -27,21 +49,13 @@
         return this.document.XMLDocument || $.isXMLDoc(this.document);
     }
 
-    readResponse(desiredDataType: DataType, onSuccess: IAjaxFileResultCallback, onError: IAjaxFileResultCallback) {
+    read(desiredDataType: DataType): IAjaxFileResult {
         var container = this.searchContainer();
 
         var status = extractStatus(container);
         var data = parse(container.val(), desiredDataType);
 
-        try {
-            if (status.isSuccess) {
-                onSuccess({ status: status, data: data });
-            } else {
-                onError({ status: status, data: data, error: 'server error' });
-            }
-        } catch (e) {
-            onError({ status: status, data: data, error: e });
-        }
+        return { status: status, data: data };
     }
 
     private searchContainer(): JQuery {
@@ -52,13 +66,12 @@
 
         return $(container);
     }
-
 }
 
-var extractStatus = (container: JQuery): IResponseStatus => {
+var extractStatus = (container?: JQuery): IResponseStatus => {
     var status: IResponseStatus = {
         code: 200,
-        text: '',
+        text: 'OK',
         isSuccess: true,
     };
 
@@ -73,6 +86,10 @@ var extractStatus = (container: JQuery): IResponseStatus => {
 };
 
 var parse = (value: string, desiredDataType: DataType) => {
+    if (!value) {
+        return null;
+    }
+
     if (desiredDataType == DataType.Text) {
         return value;
     }

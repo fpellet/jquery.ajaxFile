@@ -44,3 +44,9 @@ interface IAjaxFilePromise {
 
     abord();
 }
+
+interface IReponseHandler {
+    onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void;
+
+    dispose(): void;
+}

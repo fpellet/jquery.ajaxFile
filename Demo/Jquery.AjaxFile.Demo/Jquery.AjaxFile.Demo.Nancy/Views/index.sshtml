@@ -26,14 +26,16 @@
     <div class="container-fluid text-justify">
         <div class="container">
             <h1>Demo</h1>
-            <form class="form-inline" role="form">
+            <form role="form">
                 <div class="form-group">
                     <input type="file" name="file" data-bind="file: selectedFile">
                 </div>
                 <button class="btn btn-primary" data-bind="click: sendFileToWebApi">Send to WebApi</button>
                 <button class="btn btn-primary" data-bind="click: sendFileToWebApiWithError">Send to WebApi with error</button>
                 <button class="btn btn-primary" data-bind="click: sendFileToWebApiWithJQuery">Send to WebApi with jquery</button>
-                <button class="btn btn-primary" data-bind="click: sendFileToNancy">Send to Nancy with jquery</button>
+                <button class="btn btn-primary" data-bind="click: sendFileToNancy">Send to Nancy</button>
+                <button class="btn btn-primary" data-bind="click: downloadFileToNancy">Download file</button>
+                <button class="btn btn-primary" data-bind="click: downloadFileToNancyWithError">Download file with error</button>
             </form>
             <!-- ko with: result  -->
             <h2>Result "<span data-bind="text: Name"></span>" :</h2>

@@ -1,53 +1,55 @@
 ﻿module Form {
     export interface IForm {
-        submit(loadCallback: () => void): void;
-        isUninitialized(): boolean;
-        getResponseDocument(): ResponseDocument;
+        onLoaded(loadCallback: () => void): void;
+        submit(): void;
+        getResponseDocument(): FormResponseDocument;
         abord(): void;
         dispose(): void;
     }
 
     interface IFormFragment {
-        fragment: DocumentFragment;
+        container: JQuery;
         form: JQuery;
         iframe: JQuery;
     }
 
     class Form {
         private formFragment: IFormFragment;
-        private htmlHack: Node;
         private option: IOption;
 
         constructor(option: IOption) {
             this.option = option;
         }
 
-        initialize() {
-            this.formFragment = createFormFragment(this.option);
-            this.htmlHack = insertFormFragment(this.formFragment.fragment);
+        initialize(requestId: string) {
+            this.addRequestIdInData(requestId);
+
+            this.formFragment = createFormFragment(this.option, requestId);
+            insertFormFragment(this.formFragment);
         }
 
-        submit(loadCallback: () => void) {
+        private addRequestIdInData(requestId: string) {
+            this.option.data.__requestId = requestId;
+        }
+
+        onLoaded(loadCallback: () => void) {
             var iframe = this.formFragment.iframe;
 
             iframe.on('load', loadCallback);
+        }
 
+        submit() {
             this.formFragment.form.submit();
         }
 
-        isUninitialized(): boolean {
-            var state = getDocumentOfIFrame(this.formFragment.iframe).readyState;
-            return state && state.toLowerCase() == 'uninitialized';
-        }
-
-        getResponseDocument(): ResponseDocument {
+        getResponseDocument(): FormResponseDocument {
             var document = getDocumentOfIFrame(this.formFragment.iframe);
             if (!document) {
                 throw 'server abort';
             }
 
             var orgineUrl = this.formFragment.iframe.attr('origineSrc');
-            return new ResponseDocument(document, orgineUrl);
+            return new FormResponseDocument(document, orgineUrl);
         }
 
         abord() {
@@ -55,13 +57,11 @@
         }
 
         dispose() {
-            if (this.htmlHack) {
-                $(this.htmlHack).remove();
-                this.htmlHack = null;
-            }
+            if (this.formFragment) {
+                this.formFragment.container.remove();
 
-            this.formFragment = null;
-            this.option = null;
+                this.formFragment = null;
+            }
         }
     }
 
@@ -78,25 +78,21 @@
         $iframe.attr('src', $iframe.attr('origineSrc'));
     };
 
-    var createFormFragment = (option: IOption): IFormFragment => {
-        var fragment = document.createDocumentFragment();
-
-        var frameId = generateIFrameId();
-        var iframe = createIFrame(frameId, currentPageIsHttpsMode());
-        var form = createHtmlForm(option, frameId);
+    var createFormFragment = (option: IOption, requestId: string): IFormFragment => {
+        option.data.__requestId = requestId;
+        var iframe = createIFrame(requestId, currentPageIsHttpsMode());
+        var form = createHtmlForm(option, requestId);
 
         var container = $('<div></div>');
         container.hide();
         container.append(iframe);
         container.append(form);
 
-        fragment.appendChild(container[0]);
-
-        return { fragment: fragment, form: form, iframe: iframe };
+        return { container: container, form: form, iframe: iframe };
     };
 
-    var insertFormFragment = (fragment: DocumentFragment): Node => {
-        return document.getElementsByTagName('body')[0].appendChild(fragment);
+    var insertFormFragment = (formFragment: IFormFragment) => {
+        formFragment.container.appendTo('body');
     };
 
     var getDocumentOfIFrame = ($iframe: JQuery): Document => {
@@ -117,8 +113,6 @@
 
         return iframe.document;
     };
-
-    var generateIFrameId = (): string => 'jqFormIO' + (new Date().getTime());
 
     var createIFrame = (id: string, isHttps: boolean): JQuery => {
         var iframe = $('<iframe name="' + id + '"></iframe>');
@@ -190,9 +184,9 @@
         return form;
     };
 
-    export var createForm = (option: IOption): IForm => {
+    export var createForm = (option: IOption, requestId: string): IForm => {
         var form = new Form(option);
-        form.initialize();
+        form.initialize(requestId);
 
         return form;
     };

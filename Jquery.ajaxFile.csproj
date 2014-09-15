@@ -35,7 +35,9 @@
     <TypeScriptCompile Include="libs\mocha.d.ts" />
     <TypeScriptCompile Include="src\AjaxFile.ts" />
     <TypeScriptCompile Include="src\AjaxFilePromise.ts" />
+    <TypeScriptCompile Include="src\CookieReponseHandler.ts" />
     <TypeScriptCompile Include="src\Form.ts" />
+    <TypeScriptCompile Include="src\FormResponseHandler.ts" />
     <TypeScriptCompile Include="src\jquery\EventTrigger.ts" />
     <TypeScriptCompile Include="src\Interfaces.ts" />
     <TypeScriptCompile Include="src\jquery\AjaxFileJQuery.ts" />
@@ -43,8 +45,10 @@
     <TypeScriptCompile Include="src\jquery\Option.ts" />
     <TypeScriptCompile Include="src\jquery\Request.ts" />
     <TypeScriptCompile Include="src\Option.ts" />
+    <TypeScriptCompile Include="src\ReponseHandlerDispatcher.ts" />
     <TypeScriptCompile Include="src\Request.ts" />
     <TypeScriptCompile Include="src\ResponseDocument.ts" />
+    <TypeScriptCompile Include="src\TimeoutResponseHandler.ts" />
     <TypeScriptCompile Include="src\Url.ts" />
     <TypeScriptCompile Include="src\Utils.ts" />
     <TypeScriptCompile Include="tests\OptionTest.ts" />

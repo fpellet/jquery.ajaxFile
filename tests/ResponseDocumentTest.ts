@@ -20,7 +20,7 @@ describe("ResponseDocument", () => {
         var result = extractStatus(container);
 
         expect(result.code).to.equals(200);
-        expect(result.text).to.equals('');
+        expect(result.text).to.equals('OK');
     });
 
     it("When extractStatus of container with status 2XX Then return success", () => {
