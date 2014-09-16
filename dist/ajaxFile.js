@@ -263,6 +263,9 @@ var Form;
 
         input.replaceWith(input.clone(true, true));
 
+        input.attr('name', file.name);
+        input.off();
+
         form.append(file.element);
     };
 
