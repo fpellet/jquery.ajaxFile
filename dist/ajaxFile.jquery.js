@@ -1,5 +1,5 @@
 /*!
- * AjaxFile.js
+ * AjaxFile.js - V0.0.2
  * Project repository: https://github.com/fpellet/jquery.ajaxFile
  * Licensed under the MIT license
  */
@@ -11,7 +11,7 @@ if (typeof define === 'function' && define.amd) {
 }
 } (function ($) {
     "use strict";
-/// <reference path="../libs/jquery.d.ts" />
+
 var AjaxFile;
 (function (AjaxFile) {
     AjaxFile.send = function (option) {
@@ -22,7 +22,7 @@ var AjaxFile;
         return request.submit();
     };
 })(AjaxFile || (AjaxFile = {}));
-//# sourceMappingURL=AjaxFile.js.map
+
 
 var AjaxFilePromise = (function () {
     function AjaxFilePromise(abordCallback, register) {
@@ -66,7 +66,7 @@ var AjaxFilePromise = (function () {
     };
     return AjaxFilePromise;
 })();
-//# sourceMappingURL=AjaxFilePromise.js.map
+
 
 var readCookie = function (name) {
     var value = (document.cookie.match('(^|; )' + name + '=([^;]*)') || 0)[2];
@@ -122,7 +122,7 @@ var CookieReponseHandler = (function () {
     };
     return CookieReponseHandler;
 })();
-//# sourceMappingURL=CookieReponseHandler.js.map
+
 
 var Form;
 (function (_Form) {
@@ -306,7 +306,7 @@ var Form;
         return form;
     };
 })(Form || (Form = {}));
-//# sourceMappingURL=Form.js.map
+
 
 var FormResponseHandler = (function () {
     function FormResponseHandler() {
@@ -353,7 +353,7 @@ var FormResponseHandler = (function () {
     };
     return FormResponseHandler;
 })();
-//# sourceMappingURL=FormResponseHandler.js.map
+
 
 var DataType;
 (function (DataType) {
@@ -361,7 +361,7 @@ var DataType;
     DataType[DataType["Xml"] = 1] = "Xml";
     DataType[DataType["Text"] = 2] = "Text";
 })(DataType || (DataType = {}));
-//# sourceMappingURL=Interfaces.js.map
+
 
 var defaultOption = {
     data: {},
@@ -380,7 +380,7 @@ var mergeWithDefaultOption = function (option) {
 
     return option;
 };
-//# sourceMappingURL=Option.js.map
+
 
 var ReponseHandlerDispatcher = (function () {
     function ReponseHandlerDispatcher(id) {
@@ -404,7 +404,7 @@ var ReponseHandlerDispatcher = (function () {
     };
     return ReponseHandlerDispatcher;
 })();
-//# sourceMappingURL=ReponseHandlerDispatcher.js.map
+
 
 var generateRequestId = function () {
     return 'ajaxFile' + (new Date().getTime());
@@ -505,7 +505,7 @@ var Request = (function () {
     };
     return Request;
 })();
-//# sourceMappingURL=Request.js.map
+
 
 var createErrorResponseDocument = function (error) {
     return {
@@ -612,7 +612,7 @@ var parse = function (value, desiredDataType) {
 
     throw 'Invalid datatype : ' + desiredDataType;
 };
-//# sourceMappingURL=ResponseDocument.js.map
+
 
 var TimeoutResponseHandler = (function () {
     function TimeoutResponseHandler() {
@@ -636,9 +636,9 @@ var TimeoutResponseHandler = (function () {
     };
     return TimeoutResponseHandler;
 })();
-//# sourceMappingURL=TimeoutResponseHandler.js.map
 
-/// <reference path="utils.ts" />
+
+
 var getCurrentUrlWithoutHash = function () {
     var currentUrl = window.location.href;
     return (currentUrl.match(/^([^#]+)/) || [])[1];
@@ -696,7 +696,7 @@ var JsonToPostDataConverter;
         return result;
     };
 })(JsonToPostDataConverter || (JsonToPostDataConverter = {}));
-//# sourceMappingURL=Url.js.map
+
 
 var map = function (data, callback) {
     if (typeof callback != "function") {
@@ -721,7 +721,7 @@ if (!Array.prototype.forEach) {
         }
     };
 }
-//# sourceMappingURL=Utils.js.map
+
 
 var AjaxFileJQuery;
 (function (AjaxFileJQuery) {
@@ -771,7 +771,7 @@ var AjaxFileJQuery;
         return convertAjaxFilePromiseToDeferred(result, jqueryOption, option);
     };
 })(AjaxFileJQuery || (AjaxFileJQuery = {}));
-//# sourceMappingURL=AjaxFileJQuery.js.map
+
 
 var JQueryEventTrigger;
 (function (JQueryEventTrigger) {
@@ -810,9 +810,9 @@ var JQueryEventTrigger;
     };
 })(JQueryEventTrigger || (JQueryEventTrigger = {}));
 ;
-//# sourceMappingURL=EventTrigger.js.map
 
-//# sourceMappingURL=Interfaces.js.map
+
+
 
 var convertToDataType = function (dataType) {
     dataType = dataType && dataType.toLowerCase();
@@ -835,7 +835,7 @@ var convertJqueryOptionToOption = function (jqueryOption) {
         timeoutInSeconds: (jqueryOption.timeout || 0) * 10000
     };
 };
-//# sourceMappingURL=Option.js.map
+
 
 var generateJqueryXHR = function (result, queryOption, option, promise) {
     result = result || {};
@@ -860,7 +860,7 @@ var generateJqueryXHR = function (result, queryOption, option, promise) {
         }
     };
 };
-//# sourceMappingURL=Request.js.map
+
 
 return AjaxFile;
 }));
