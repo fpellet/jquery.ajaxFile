@@ -22,6 +22,7 @@ var Q = require('q');
 var plumber = require('gulp-plumber');
 var watch = require('gulp-watch');
 var rename = require("gulp-rename");
+var stripLine = require('gulp-strip-line');
 
 var taskAsync = require('./taskAsync');
 var scriptWrapper = require('./scriptWrapper');
@@ -63,6 +64,7 @@ gulp.task('build-test-ts', function () {
 gulp.task('merge-src-js', function () {
     return gulp.src(sourcePath + '/*.js')
                 .pipe(concat(scriptName + '.js'))
+                .pipe(stripLine([/^\/\/(#|\/)/]))
                 .pipe(scriptWrapper.wrap())
                 .pipe(gulp.dest(distPath));
 });
@@ -70,6 +72,7 @@ gulp.task('merge-src-js', function () {
 gulp.task('merge-src-js-with-jquery', function () {
     return gulp.src(sourcePath + '/**/*.js')
                 .pipe(concat(scriptName + '.jquery.js'))
+                .pipe(stripLine([/^\/\/(#|\/)/]))
                 .pipe(scriptWrapper.wrap())
                 .pipe(gulp.dest(distPath));
 });
