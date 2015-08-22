@@ -23,7 +23,6 @@
     <Content Include=".gitignore" />
     <Content Include="gulpfile.js" />
     <Content Include="karma.conf.js" />
-    <Content Include="libs\jquery-1.11.1.js" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />
     <Content Include="README.md" />
