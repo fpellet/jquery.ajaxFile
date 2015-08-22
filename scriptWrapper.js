@@ -28,6 +28,10 @@ var postScript = "\r\n" +
                  "return AjaxFile;" + "\r\n" +
                  "}));";
 
+module.exports.generateTemplate = function() {
+    return generateHead() + preScript + '%= body %' + postScript;
+};
+
 module.exports.wrap = function () {
     return es.map(function (file, gulpCallback) {
         file.contents = Buffer.concat([
