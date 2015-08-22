@@ -19,7 +19,6 @@ var watch = require('gulp-watch');
 var del = require('del');
 var typescript = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
-var wrapJs = require("gulp-wrap-js");
 var batch = require('gulp-batch');
 
 var taskAsync = require('./taskAsync');
@@ -35,7 +34,7 @@ var compileTypeScriptSources = function(sourceFiles, outputName) {
         .pipe(sourcemaps.init())
             .pipe(typescript())
             .pipe(concat(outputName + '.js'))
-            .pipe(wrapJs(scriptWrapper.generateTemplate()))
+            .pipe(scriptWrapper.wrap())
             .pipe(gulp.dest(distPath))
             .pipe(uglify({ preserveComments: 'some' }))
             .pipe(concat(outputName + '.min.js'))

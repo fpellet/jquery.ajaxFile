@@ -1,7 +1,7 @@
 ﻿'use strict';
 
-var es = require('event-stream');
 var fs = require('fs');
+var wrapJs = require("gulp-wrap-js");
 
 var getCurrentVersion = function () {
     var packageConfig = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
@@ -28,18 +28,10 @@ var postScript = "\r\n" +
                  "return AjaxFile;" + "\r\n" +
                  "}));";
 
-module.exports.generateTemplate = function() {
+var generateTemplate = function() {
     return generateHead() + preScript + '%= body %' + postScript;
 };
 
-module.exports.wrap = function () {
-    return es.map(function (file, gulpCallback) {
-        file.contents = Buffer.concat([
-            new Buffer(generateHead() + preScript),
-            file.contents,
-            new Buffer(postScript)
-        ]);
-
-        gulpCallback(null, file);
-    });
+exports.wrap = function() {
+    return wrapJs(generateTemplate());
 };
