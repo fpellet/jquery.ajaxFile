@@ -16,6 +16,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <ItemGroup>
     <Content Include=".gitattributes" />
@@ -30,9 +31,6 @@
     <Content Include="taskAsync.js" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="libs\chai.d.ts" />
-    <TypeScriptCompile Include="libs\jquery.d.ts" />
-    <TypeScriptCompile Include="libs\mocha.d.ts" />
     <TypeScriptCompile Include="src\AjaxFile.ts" />
     <TypeScriptCompile Include="src\AjaxFilePromise.ts" />
     <TypeScriptCompile Include="src\CookieReponseHandler.ts" />
@@ -55,6 +53,13 @@
     <TypeScriptCompile Include="tests\ResponseDocumentTest.ts" />
     <TypeScriptCompile Include="tests\UrlTest.ts" />
     <TypeScriptCompile Include="tests\UtilsTest.ts" />
+    <TypeScriptCompile Include="typings\chai\chai.d.ts" />
+    <TypeScriptCompile Include="typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="typings\mocha\mocha.d.ts" />
+    <TypeScriptCompile Include="typings\tsd.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="tsd.json" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>

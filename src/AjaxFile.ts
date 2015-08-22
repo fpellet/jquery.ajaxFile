@@ -1,4 +1,4 @@
-/// <reference path="../libs/jquery.d.ts" />
+/// <reference path="../typings/jquery/jquery.d.ts" />
 
 module AjaxFile {
     export var send = (option: IOption): IAjaxFilePromise => {

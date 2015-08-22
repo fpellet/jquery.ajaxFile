@@ -1,6 +1,5 @@
-﻿/// <reference path="../libs/chai.d.ts" />
-/// <reference path="../src/option.ts" />
-/// <reference path="../libs/mocha.d.ts" />
+﻿/// <reference path="../src/option.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 
 var expect = chai.expect;
 var assert = chai.assert;

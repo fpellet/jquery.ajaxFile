@@ -107,11 +107,11 @@
 
         try {
             // simply checking may throw in ie8 under ssl or mismatched protocol
-            return iframe.contentDocument ? iframe.contentDocument : iframe.document;
+            return iframe.contentDocument ? iframe.contentDocument : (<any>iframe).document;
         } catch (ignore) {
         }
 
-        return iframe.document;
+        return (<any>iframe).document;
     };
 
     var createIFrame = (id: string, isHttps: boolean): JQuery => {
