@@ -17,6 +17,7 @@ Demo/Jquery.AjaxFile.Demo/packages/
 *.user
 *.sln.docstates
 *.sln.ide/
+.vs/
 
 # Build results
 
