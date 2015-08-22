@@ -5,7 +5,8 @@
   "scripts": {
     "test": "node_modules/.bin/gulp test",
     "dev": "node_modules/.bin/gulp dev",
-    "build": "node_modules/.bin/gulp build"
+    "build": "node_modules/.bin/gulp build",
+    "postinstall": "node_modules/.bin/tsd install"
   },
   "repository": {
     "type": "git",
