@@ -1,16 +1,14 @@
 module.exports = function(config) {
 	config.set({
 		basePath: '',
-		frameworks: ['mocha', 'chai'],
-		files: ['libs/*.js', 'src/**/*.js', 'tests/**/*.js'],
+		frameworks: ['mocha', 'chai', 'source-map-support'],
+		files: ['libs/*.js', 'tests/merge.js'],
 		reporters: ['progress'],
 		autoWatch: true,
 		browsers: ['PhantomJS'],
-
-		plugins: [
-			'karma-mocha',
-			'karma-chai',
-			'karma-phantomjs-launcher'
-		]
+        
+		preprocessors: {
+		    'dist/*.js': ['sourcemap']
+		}
 	});
 };
