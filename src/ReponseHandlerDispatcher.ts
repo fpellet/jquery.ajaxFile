@@ -1,4 +1,10 @@
-﻿class ReponseHandlerDispatcher {
+﻿interface IReponseHandler {
+    onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void;
+
+    dispose(): void;
+}
+
+class ReponseHandlerDispatcher {
     private handlers: IReponseHandler[];
 
     constructor(id: string) {

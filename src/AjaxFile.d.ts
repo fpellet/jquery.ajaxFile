@@ -1,4 +1,4 @@
-﻿enum DataType {
+declare enum DataType {
     Json,
     Xml,
     Text
@@ -45,8 +45,12 @@ interface IAjaxFilePromise {
     abord(): void;
 }
 
-interface IReponseHandler {
-    onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void;
+interface IAjaxFileStatic {
+    send(option: IOption): IAjaxFilePromise;
+}
 
-    dispose(): void;
+declare var AjaxFile: IAjaxFileStatic;
+
+declare module 'ajaxfile' {
+    export = AjaxFile;
 }
