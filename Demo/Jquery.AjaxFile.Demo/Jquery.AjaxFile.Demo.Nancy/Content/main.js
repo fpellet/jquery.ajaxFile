@@ -6,7 +6,7 @@
                 url: url,
                 dataType: "json",
                 files: [
-                  { name: 'joeFile', element: input.element() }
+                  { name: 'joeFile', element: input.getElement() }
                 ],
                 data: {
                     name: 'joe',
@@ -29,7 +29,7 @@
                     url: url,
                     dataType: "json",
                     files: [
-                        { name: 'joeFile', element: input.element() }
+                        { name: 'joeFile', element: input.getElement() }
                     ],
                     success: function (json) {
                         defer.resolve({ data: json });
