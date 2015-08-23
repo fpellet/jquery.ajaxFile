@@ -1,7 +1,7 @@
 {
   "name": "jquery.ajaxfile",
   "version": "0.1.0",
-  "description": "Allow to upload file with old naviagtor",
+  "description": "Allow to upload file with old browser",
   "scripts": {
     "test": "node_modules/.bin/gulp test",
     "dev": "node_modules/.bin/gulp dev",
