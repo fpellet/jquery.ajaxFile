@@ -13,12 +13,14 @@
     'use strict';
     var AjaxFile;
     (function (AjaxFile) {
-        AjaxFile.send = function (option) {
+        'use strict';
+        function send(option) {
             option = mergeWithDefaultOption(option);
             var request = new Request(option);
             request.initialize();
             return request.submit();
-        };
+        }
+        AjaxFile.send = send;
     }(AjaxFile || (AjaxFile = {})));
     var AjaxFilePromise = function () {
         function AjaxFilePromise(abordCallback, register) {
@@ -54,16 +56,19 @@
         };
         return AjaxFilePromise;
     }();
-    var readCookie = function (name) {
+    function readCookie(name) {
         var value = (document.cookie.match('(^|; )' + name + '=([^;]*)') || 0)[2];
         return decodeURIComponent(value) || null;
-    };
-    var hasCookie = function (name) {
-        return document.cookie.indexOf(name + '=') != -1;
-    };
-    var clearCookie = function (name) {
+    }
+    ;
+    function hasCookie(name) {
+        return document.cookie.indexOf(name + '=') !== -1;
+    }
+    ;
+    function clearCookie(name) {
         document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    };
+    }
+    ;
     var CookieReponseHandler = function () {
         function CookieReponseHandler(id) {
             this.cookieName = id;
@@ -99,6 +104,7 @@
     }();
     var Form;
     (function (Form_1) {
+        'use strict';
         var Form = function () {
             function Form(option) {
                 this.option = option;
@@ -137,7 +143,7 @@
             };
             return Form;
         }();
-        var abordIFrame = function ($iframe) {
+        function abordIFrame($iframe) {
             try {
                 var iframe = $iframe[0];
                 var documentOfIFrame = iframe.contentWindow.document;
@@ -147,8 +153,9 @@
             } catch (ignore) {
             }
             $iframe.attr('src', $iframe.attr('origineSrc'));
-        };
-        var createFormFragment = function (option, requestId) {
+        }
+        ;
+        function createFormFragment(option, requestId) {
             option.data.__requestId = requestId;
             var iframe = createIFrame(requestId, currentPageIsHttpsMode());
             var form = createHtmlForm(option, requestId);
@@ -161,11 +168,13 @@
                 form: form,
                 iframe: iframe
             };
-        };
-        var insertFormFragment = function (formFragment) {
+        }
+        ;
+        function insertFormFragment(formFragment) {
             formFragment.container.appendTo('body');
-        };
-        var getDocumentOfIFrame = function ($iframe) {
+        }
+        ;
+        function getDocumentOfIFrame($iframe) {
             var iframe = $iframe[0];
             try {
                 if (iframe.contentWindow) {
@@ -179,51 +188,56 @@
             } catch (ignore) {
             }
             return iframe.document;
-        };
-        var createIFrame = function (id, isHttps) {
+        }
+        ;
+        function createIFrame(id, isHttps) {
             var iframe = $('<iframe name="' + id + '"></iframe>');
             var src = isHttps ? 'javascript:false' : 'about:blank';
             iframe.attr('src', src);
             iframe.attr('origineSrc', src);
             return iframe;
-        };
-        var createHtmlForm = function (option, iframeId) {
+        }
+        function createHtmlForm(option, iframeId) {
             var form = $('<form></form>');
             form.attr('method', option.method);
             form.attr('action', option.url);
             form.attr('target', iframeId);
             form.attr('encoding', 'multipart/form-data');
             form.attr('enctype', 'multipart/form-data');
-            if (option.method.toLowerCase() == 'GET') {
+            if (option.method.toLowerCase() === 'GET') {
                 applyGetMethodOnForm(form, option);
             } else {
                 applyPostMethodOnForm(form, option);
             }
             cloneAndMoveInputFiles(form, option.files);
             return form;
-        };
-        var cloneAndMoveInputFiles = function (form, files) {
+        }
+        ;
+        function cloneAndMoveInputFiles(form, files) {
             $.each(files, function (num, file) {
                 cloneAndMoveInputFile(form, file);
             });
-        };
-        var cloneAndMoveInputFile = function (form, file) {
+        }
+        ;
+        function cloneAndMoveInputFile(form, file) {
             var input = $(file.element);
             input.replaceWith(input.clone(true, true));
             input.attr('name', file.name);
             input.off();
             form.append(file.element);
-        };
-        var urlHasAlreadyParameters = function (url) {
-            return url.indexOf('?') != -1;
-        };
-        var applyGetMethodOnForm = function (form, option) {
+        }
+        ;
+        function urlHasAlreadyParameters(url) {
+            return url.indexOf('?') !== -1;
+        }
+        function applyGetMethodOnForm(form, option) {
             var urlParameters = $.param(option.data);
             var url = option.url + (urlHasAlreadyParameters(option.url) ? '&' : '?') + urlParameters;
             form.attr('action', url);
             return form;
-        };
-        var applyPostMethodOnForm = function (form, option) {
+        }
+        ;
+        function applyPostMethodOnForm(form, option) {
             form.attr('action', option.url);
             var parameters = JsonToPostDataConverter.convert(option.data);
             $.each(parameters, function (num, parameter) {
@@ -233,12 +247,15 @@
                 input.appendTo(form);
             });
             return form;
-        };
-        Form_1.createForm = function (option, requestId) {
+        }
+        ;
+        function createForm(option, requestId) {
             var form = new Form(option);
             form.initialize(requestId);
             return form;
-        };
+        }
+        Form_1.createForm = createForm;
+        ;
     }(Form || (Form = {})));
     var FormResponseHandler = function () {
         function FormResponseHandler() {
@@ -292,13 +309,14 @@
         method: 'POST',
         timeoutInSeconds: 60
     };
-    var mergeWithDefaultOption = function (option) {
+    function mergeWithDefaultOption(option) {
         option = $.extend(true, {}, defaultOption, option);
         if (!option.url) {
             option.url = getCurrentUrlWithoutHash();
         }
         return option;
-    };
+    }
+    ;
     var ReponseHandlerDispatcher = function () {
         function ReponseHandlerDispatcher(id) {
             var cookieHandler = new CookieReponseHandler(id);
@@ -320,9 +338,9 @@
         };
         return ReponseHandlerDispatcher;
     }();
-    var generateRequestId = function () {
+    function generateRequestId() {
         return 'ajaxFile' + new Date().getTime();
-    };
+    }
     var Request = function () {
         function Request(option) {
             this.option = option;
@@ -405,14 +423,15 @@
         };
         return Request;
     }();
-    var createErrorResponseDocument = function (error) {
+    function createErrorResponseDocument(error) {
         return {
             read: function () {
                 throw error;
             }
         };
-    };
-    var createCookieResponseDocument = function (value) {
+    }
+    ;
+    function createCookieResponseDocument(value) {
         return {
             read: function (desiredDataType) {
                 var data = parse(value, desiredDataType);
@@ -422,7 +441,8 @@
                 };
             }
         };
-    };
+    }
+    ;
     var FormResponseDocument = function () {
         function FormResponseDocument(document, origineUrl) {
             this.document = document;
@@ -438,7 +458,7 @@
             return this.document.body !== null && !!this.document.body.innerHTML;
         };
         FormResponseDocument.prototype.hrefHasChanged = function () {
-            return this.document.location.href != this.origineUrl;
+            return this.document.location.href !== this.origineUrl;
         };
         FormResponseDocument.prototype.isXml = function () {
             return this.document.XMLDocument || $.isXMLDoc(this.document);
@@ -461,7 +481,7 @@
         };
         return FormResponseDocument;
     }();
-    var extractStatus = function (container) {
+    function extractStatus(container) {
         var status = {
             code: 200,
             text: 'OK',
@@ -473,28 +493,29 @@
             status.text = container.attr('statusText') || status.text;
             status.isSuccess = code >= 200 && code < 300 || code === 304;
         }
-        ;
         return status;
-    };
-    var parse = function (value, desiredDataType) {
+    }
+    ;
+    function parse(value, desiredDataType) {
         if (!value) {
             return null;
         }
-        if (desiredDataType == DataType.Text) {
+        switch (desiredDataType) {
+        case DataType.Text:
             return value;
-        }
-        if (desiredDataType == DataType.Json) {
+        case DataType.Json:
             return $.parseJSON(value);
-        }
-        if (desiredDataType == DataType.Xml) {
+        case DataType.Xml:
             var xml = $.parseXML(value);
             if (xml.documentElement.nodeName === 'parsererror') {
                 throw 'parsererror';
             }
             return xml;
+        default:
+            throw 'Invalid datatype : ' + desiredDataType;
         }
-        throw 'Invalid datatype : ' + desiredDataType;
-    };
+    }
+    ;
     var TimeoutResponseHandler = function () {
         function TimeoutResponseHandler() {
         }
@@ -515,8 +536,64 @@
         };
         return TimeoutResponseHandler;
     }();
-    var map = function (data, callback) {
-        if (typeof callback != 'function') {
+    function getCurrentUrlWithoutHash() {
+        var currentUrl = window.location.href;
+        return (currentUrl.match(/^([^#]+)/) || [])[1];
+    }
+    function currentPageIsHttpsMode() {
+        return urlIsHttpsMode(window.location.href);
+    }
+    function urlIsHttpsMode(url) {
+        return /^https/i.test(url || '');
+    }
+    var JsonToPostDataConverter;
+    (function (JsonToPostDataConverter) {
+        'use strict';
+        function pushParameters(results, data, prefix) {
+            if (!data) {
+                return;
+            }
+            for (var propertyName in data) {
+                if (!data.hasOwnProperty(propertyName)) {
+                    continue;
+                }
+                var value = data[propertyName];
+                if (!value) {
+                    continue;
+                }
+                pushParameterOfProperty(results, propertyName, data[propertyName], prefix);
+            }
+        }
+        ;
+        function pushParameterOfProperty(results, propertyName, value, prefix) {
+            var parameterName = prefix ? prefix + '[' + propertyName + ']' : propertyName;
+            var type = Object.prototype.toString.call(value);
+            if (type === '[object Array]') {
+                value.forEach(function (item, index) {
+                    pushParameters(results, item, parameterName + '[' + index + ']');
+                });
+                return;
+            }
+            if (type === '[object Object]') {
+                pushParameters(results, value, parameterName);
+                return;
+            }
+            results.push({
+                name: parameterName,
+                value: value + ''
+            });
+        }
+        ;
+        function convert(data) {
+            var result = [];
+            pushParameters(result, data);
+            return result;
+        }
+        JsonToPostDataConverter.convert = convert;
+        ;
+    }(JsonToPostDataConverter || (JsonToPostDataConverter = {})));
+    function map(data, callback) {
+        if (typeof callback !== 'function') {
             throw new TypeError();
         }
         var arrayLength = data.length;
@@ -527,7 +604,8 @@
             }
         }
         return result;
-    };
+    }
+    ;
     if (!Array.prototype.forEach) {
         Array.prototype.forEach = function (fn, scope) {
             for (var i = 0, len = this.length; i < len; ++i) {
@@ -535,57 +613,10 @@
             }
         };
     }
-    /// <reference path="utils.ts" />
-    var getCurrentUrlWithoutHash = function () {
-        var currentUrl = window.location.href;
-        return (currentUrl.match(/^([^#]+)/) || [])[1];
-    };
-    var currentPageIsHttpsMode = function () {
-        return urlIsHttpsMode(window.location.href);
-    };
-    var urlIsHttpsMode = function (url) {
-        return /^https/i.test(url || '');
-    };
-    var JsonToPostDataConverter;
-    (function (JsonToPostDataConverter) {
-        var pushParameters = function (results, data, prefix) {
-            if (!data) {
-                return;
-            }
-            for (var propertyName in data) {
-                var value = data[propertyName];
-                if (!value)
-                    continue;
-                pushParameterOfProperty(results, propertyName, data[propertyName], prefix);
-            }
-        };
-        var pushParameterOfProperty = function (results, propertyName, value, prefix) {
-            var parameterName = prefix ? prefix + '[' + propertyName + ']' : propertyName;
-            var type = Object.prototype.toString.call(value);
-            if (type === '[object Array]') {
-                value.forEach(function (item, index) {
-                    pushParameters(results, item, parameterName + '[' + index + ']');
-                });
-                return;
-            }
-            if (type == '[object Object]') {
-                pushParameters(results, value, parameterName);
-                return;
-            }
-            results.push({
-                name: parameterName,
-                value: value + ''
-            });
-        };
-        JsonToPostDataConverter.convert = function (data) {
-            var result = [];
-            pushParameters(result, data);
-            return result;
-        };
-    }(JsonToPostDataConverter || (JsonToPostDataConverter = {})));
     var AjaxFileJQuery;
     (function (AjaxFileJQuery) {
-        var convertAjaxFilePromiseToDeferred = function (promise, queryOption, option) {
+        'use strict';
+        function convertAjaxFilePromiseToDeferred(promise, queryOption, option) {
             var deferred = $.Deferred();
             var eventTrigger = JQueryEventTrigger;
             eventTrigger.send(option, generateJqueryXHR(null, queryOption, option, promise));
@@ -608,12 +639,14 @@
                 deferred.always(queryOption.complete);
             }
             return deferred;
-        };
-        var generateOption = function (jqueryOption) {
+        }
+        ;
+        function generateOption(jqueryOption) {
             var option = convertJqueryOptionToOption(jqueryOption);
             var defaultSettings = convertJqueryOptionToOption($.ajaxSettings);
             return $.extend(true, {}, defaultSettings, defaultOption, option);
-        };
+        }
+        ;
         $.fn.ajaxWithFile = function (jqueryOption) {
             var option = generateOption(jqueryOption);
             var result = AjaxFile.send(option);
@@ -622,7 +655,8 @@
     }(AjaxFileJQuery || (AjaxFileJQuery = {})));
     var JQueryEventTrigger;
     (function (JQueryEventTrigger) {
-        JQueryEventTrigger.send = function (option, xmlHttpRequest) {
+        'use strict';
+        function send(option, xmlHttpRequest) {
             if ($.active++ === 0) {
                 sendGlobalEvent(option, 'ajaxStart');
             }
@@ -630,23 +664,29 @@
                 xmlHttpRequest,
                 option
             ]);
-        };
-        JQueryEventTrigger.error = function (option, xmlHttpRequest, errorThrown) {
+        }
+        JQueryEventTrigger.send = send;
+        ;
+        function error(option, xmlHttpRequest, errorThrown) {
             sendGlobalEvent(option, 'ajaxError', [
                 xmlHttpRequest,
                 option,
                 errorThrown
             ]);
             completed(option, xmlHttpRequest);
-        };
-        JQueryEventTrigger.success = function (option, xmlHttpRequest) {
+        }
+        JQueryEventTrigger.error = error;
+        ;
+        function success(option, xmlHttpRequest) {
             sendGlobalEvent(option, 'ajaxSuccess', [
                 xmlHttpRequest,
                 option
             ]);
             completed(option, xmlHttpRequest);
-        };
-        var completed = function (option, xmlHttpRequest) {
+        }
+        JQueryEventTrigger.success = success;
+        ;
+        function completed(option, xmlHttpRequest) {
             sendGlobalEvent(option, 'ajaxComplete', [
                 xmlHttpRequest,
                 option
@@ -654,25 +694,28 @@
             if (!--$.active) {
                 sendGlobalEvent(option, 'ajaxStop');
             }
-        };
-        var sendGlobalEvent = function (option, eventName, parameters) {
+        }
+        ;
+        function sendGlobalEvent(option, eventName, parameters) {
             if (!option.global) {
                 return;
             }
             $.event.trigger(eventName, parameters);
-        };
+        }
+        ;
     }(JQueryEventTrigger || (JQueryEventTrigger = {})));
     ;
-    var convertToDataType = function (dataType) {
+    function convertToDataType(dataType) {
         dataType = dataType && dataType.toLowerCase();
-        if (dataType == 'xml') {
+        if (dataType === 'xml') {
             return DataType.Xml;
-        } else if (dataType == 'text') {
+        } else if (dataType === 'text') {
             return DataType.Text;
         }
         return DataType.Json;
-    };
-    var convertJqueryOptionToOption = function (jqueryOption) {
+    }
+    ;
+    function convertJqueryOptionToOption(jqueryOption) {
         return {
             method: jqueryOption.type,
             url: jqueryOption.url,
@@ -681,16 +724,17 @@
             desiredResponseDataType: convertToDataType(jqueryOption.dataType),
             timeoutInSeconds: (jqueryOption.timeout || 0) * 10000
         };
-    };
-    var generateJqueryXHR = function (result, queryOption, option, promise) {
+    }
+    ;
+    function generateJqueryXHR(result, queryOption, option, promise) {
         result = result || {};
         var status = result.status;
         return {
             readyState: 0,
             status: status && status.code || 0,
             statusText: status && status.text || 'n/a',
-            responseXML: option.desiredResponseDataType == DataType.Xml ? result.data : null,
-            responseText: option.desiredResponseDataType == DataType.Text ? result.data : null,
+            responseXML: option.desiredResponseDataType === DataType.Xml ? result.data : null,
+            responseText: option.desiredResponseDataType === DataType.Text ? result.data : null,
             abort: function () {
                 promise.abord();
             },
@@ -701,9 +745,10 @@
                 return '';
             },
             getResponseHeader: function (header) {
-                return header.toLowerCase() == 'content-type' ? queryOption.dataType : undefined;
+                return header.toLowerCase() === 'content-type' ? queryOption.dataType : undefined;
             }
         };
-    };
+    }
+    ;
     return AjaxFile;
 }));
