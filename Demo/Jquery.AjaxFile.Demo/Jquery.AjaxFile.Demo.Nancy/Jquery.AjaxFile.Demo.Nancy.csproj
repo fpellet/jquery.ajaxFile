@@ -70,7 +70,6 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\ajaxFile.knockout.js" />
     <Content Include="Content\main.css" />
     <Content Include="packages.config" />
     <Content Include="Content\main.js" />
@@ -107,13 +106,8 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>rmdir "$(SolutionDir)Jquery.AjaxFile.Demo.Runner\Views" /s /q
-mkdir "$(SolutionDir)Jquery.AjaxFile.Demo.Runner\Views"
-xcopy /s /y /R "$(SolutionDir)Jquery.AjaxFile.Demo.Nancy\Views\*.sshtml" "$(SolutionDir)Jquery.AjaxFile.Demo.Runner\Views"
-
-rmdir "$(SolutionDir)Jquery.AjaxFile.Demo.Runner\Content" /s /q
-mkdir "$(SolutionDir)Jquery.AjaxFile.Demo.Runner\Content"
-xcopy /s /y /R "$(SolutionDir)Jquery.AjaxFile.Demo.Nancy\Content\*.*" "$(SolutionDir)Jquery.AjaxFile.Demo.Runner\Content"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

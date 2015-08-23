@@ -21,6 +21,12 @@ namespace Jquery.AjaxFile.Demo.Runner
                 FileSystem = new PhysicalFileSystem(Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "../../../dist")),
             });
 
+            app.UseFileServer(new FileServerOptions
+            {
+                RequestPath = new PathString("/Content"),
+                FileSystem = new PhysicalFileSystem(Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "../Jquery.AjaxFile.Demo.Nancy/Content")),
+            });
+
             _apiStartup.Configuration(app);
             _nancyStartup.Configuration(app);
 
