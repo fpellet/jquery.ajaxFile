@@ -1,8 +1,10 @@
 var sourceFilesWithoutJQuery = 'src/*.ts';
 var sourceFilesWithJQuery = 'src/**/*.ts';
+var sourceFilesOfKnockoutPlugin = 'plugin/ajaxFile.knockout.ts';
 
 var scriptNameWithoutJquery = 'ajaxFile';
 var scriptNameWithJquery = scriptNameWithoutJquery + '.jquery';
+var scriptNameOfKnockoutPlugin = 'ajaxFile.knockout';
 
 var testFiles = 'tests/**/*.ts';
 var testPath = 'tests';
@@ -31,13 +33,15 @@ gulp.task('clean-build', function (done) {
     return del(distPath, done);
 });
 
-var compileTypeScriptSources = function(sourceFiles, outputName) {
+var compileTypeScriptSources = function (sourceFiles, outputName, wrapper) {
+    wrapper = wrapper || scriptWrapper.wrap;
+
     return gulp
         .src([sourceFiles, externalLibTypingFile])
         .pipe(sourcemaps.init())
             .pipe(typescript())
             .pipe(concat(outputName + '.js'))
-            .pipe(scriptWrapper.wrap())
+            .pipe(wrapper())
             .pipe(gulp.dest(distPath))
             .pipe(uglify({ preserveComments: 'some' }))
             .pipe(concat(outputName + '.min.js'))
@@ -53,7 +57,11 @@ gulp.task('build-src-ts-with-jquery', function () {
     return compileTypeScriptSources(sourceFilesWithJQuery, scriptNameWithJquery);
 });
 
-gulp.task('build-src-ts', ['build-src-ts-without-jquery', 'build-src-ts-with-jquery']);
+gulp.task('build-src-ts-plugin-ko', function () {
+    return compileTypeScriptSources(sourceFilesOfKnockoutPlugin, scriptNameOfKnockoutPlugin, scriptWrapper.wrapForKnockoutPlugin);
+});
+
+gulp.task('build-src-ts', ['build-src-ts-without-jquery', 'build-src-ts-with-jquery', 'build-src-ts-plugin-ko']);
 
 gulp.task('build', function () {
     return taskAsync.runSequence(['clean-build', 'build-src-ts']);

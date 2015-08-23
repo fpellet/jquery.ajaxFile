@@ -26,7 +26,7 @@ var preScript = "(function (factory) {" + "\r\n" +
                 "    \"use strict\";" + "\r\n";
 var postScript = "\r\n" +
                  "return AjaxFile;" + "\r\n" +
-                 "}));";
+                 "}));" + "\r\n";
 
 var generateTemplate = function() {
     return generateHead() + preScript + '%= body %' + postScript;
@@ -34,4 +34,17 @@ var generateTemplate = function() {
 
 exports.wrap = function() {
     return wrapJs(generateTemplate());
+};
+
+exports.wrapForKnockoutPlugin = function () {
+    var template = generateHead() + "(function (factory) {" + "\r\n" +
+                    "if (typeof define === 'function' && define.amd) {" + "\r\n" +
+                    "    define(['jquery', 'knockout'], factory);" + "\r\n" +
+                    "} else {" + "\r\n" +
+                    "   factory( (typeof(jQuery) != 'undefined') ? jQuery : window.Zepto, ko);" + "\r\n" +
+                    "}" + "\r\n" +
+                "} (function ($, ko) {" + "\r\n" +
+                "    \"use strict\";" + "\r\n" + '%= body %' + "\r\n" +
+                 "}));" + "\r\n";
+    return wrapJs(template);
 };
