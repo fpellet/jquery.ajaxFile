@@ -1,5 +1,5 @@
 /*!
- * AjaxFile.js - V0.0.2
+ * AjaxFile.js - V0.0.3
  * Project repository: https://github.com/fpellet/jquery.ajaxFile
  * Licensed under the MIT license
  */
@@ -11,17 +11,20 @@
     }
 }(function ($) {
     'use strict';
-    var AjaxFile;
-    (function (AjaxFile) {
-        'use strict';
-        function send(option) {
+    var DataType;
+    (function (DataType) {
+        DataType[DataType['Json'] = 0] = 'Json';
+        DataType[DataType['Xml'] = 1] = 'Xml';
+        DataType[DataType['Text'] = 2] = 'Text';
+    }(DataType || (DataType = {})));
+    var ajaxFile = {
+        send: function (option) {
             option = mergeWithDefaultOption(option);
             var request = new Request(option);
             request.initialize();
             return request.submit();
         }
-        AjaxFile.send = send;
-    }(AjaxFile || (AjaxFile = {})));
+    };
     var AjaxFilePromise = function () {
         function AjaxFilePromise(abordCallback, register) {
             var deferred = $.Deferred();
@@ -296,12 +299,6 @@
         };
         return FormResponseHandler;
     }();
-    var DataType;
-    (function (DataType) {
-        DataType[DataType['Json'] = 0] = 'Json';
-        DataType[DataType['Xml'] = 1] = 'Xml';
-        DataType[DataType['Text'] = 2] = 'Text';
-    }(DataType || (DataType = {})));
     var defaultOption = {
         data: {},
         files: [],
@@ -613,5 +610,5 @@
             }
         };
     }
-    return AjaxFile;
+    return ajaxFile;
 }));

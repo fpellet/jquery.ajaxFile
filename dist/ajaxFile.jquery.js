@@ -1,5 +1,5 @@
 /*!
- * AjaxFile.js - V0.0.2
+ * AjaxFile.js - V0.0.3
  * Project repository: https://github.com/fpellet/jquery.ajaxFile
  * Licensed under the MIT license
  */
@@ -11,17 +11,20 @@
     }
 }(function ($) {
     'use strict';
-    var AjaxFile;
-    (function (AjaxFile) {
-        'use strict';
-        function send(option) {
+    var DataType;
+    (function (DataType) {
+        DataType[DataType['Json'] = 0] = 'Json';
+        DataType[DataType['Xml'] = 1] = 'Xml';
+        DataType[DataType['Text'] = 2] = 'Text';
+    }(DataType || (DataType = {})));
+    var ajaxFile = {
+        send: function (option) {
             option = mergeWithDefaultOption(option);
             var request = new Request(option);
             request.initialize();
             return request.submit();
         }
-        AjaxFile.send = send;
-    }(AjaxFile || (AjaxFile = {})));
+    };
     var AjaxFilePromise = function () {
         function AjaxFilePromise(abordCallback, register) {
             var deferred = $.Deferred();
@@ -296,12 +299,6 @@
         };
         return FormResponseHandler;
     }();
-    var DataType;
-    (function (DataType) {
-        DataType[DataType['Json'] = 0] = 'Json';
-        DataType[DataType['Xml'] = 1] = 'Xml';
-        DataType[DataType['Text'] = 2] = 'Text';
-    }(DataType || (DataType = {})));
     var defaultOption = {
         data: {},
         files: [],
@@ -618,14 +615,14 @@
         'use strict';
         function convertAjaxFilePromiseToDeferred(promise, queryOption, option) {
             var deferred = $.Deferred();
-            var eventTrigger = JQueryEventTrigger;
-            eventTrigger.send(option, generateJqueryXHR(null, queryOption, option, promise));
+            var eventTrigger = AjaxFileJQuery.JQueryEventTrigger;
+            eventTrigger.send(option, AjaxFileJQuery.generateJqueryXHR(null, queryOption, option, promise));
             promise.then(function (result) {
-                var xhr = generateJqueryXHR(result, queryOption, option, promise);
+                var xhr = AjaxFileJQuery.generateJqueryXHR(result, queryOption, option, promise);
                 deferred.resolve(result.data, result.status && result.status.text, xhr);
                 eventTrigger.success(option, xhr);
             }).fail(function (result) {
-                var xhr = generateJqueryXHR(result, queryOption, option, promise);
+                var xhr = AjaxFileJQuery.generateJqueryXHR(result, queryOption, option, promise);
                 deferred.reject(xhr, result.status && result.status.text, result.error);
                 eventTrigger.error(option, xhr, result.error);
             });
@@ -642,8 +639,8 @@
         }
         ;
         function generateOption(jqueryOption) {
-            var option = convertJqueryOptionToOption(jqueryOption);
-            var defaultSettings = convertJqueryOptionToOption($.ajaxSettings);
+            var option = AjaxFileJQuery.convertJqueryOptionToOption(jqueryOption);
+            var defaultSettings = AjaxFileJQuery.convertJqueryOptionToOption($.ajaxSettings);
             return $.extend(true, {}, defaultSettings, defaultOption, option);
         }
         ;
@@ -653,102 +650,115 @@
             return convertAjaxFilePromiseToDeferred(result, jqueryOption, option);
         };
     }(AjaxFileJQuery || (AjaxFileJQuery = {})));
-    var JQueryEventTrigger;
-    (function (JQueryEventTrigger) {
+    var AjaxFileJQuery;
+    (function (AjaxFileJQuery) {
+        var JQueryEventTrigger;
+        (function (JQueryEventTrigger) {
+            'use strict';
+            function send(option, xmlHttpRequest) {
+                if ($.active++ === 0) {
+                    sendGlobalEvent(option, 'ajaxStart');
+                }
+                sendGlobalEvent(option, 'ajaxSend', [
+                    xmlHttpRequest,
+                    option
+                ]);
+            }
+            JQueryEventTrigger.send = send;
+            ;
+            function error(option, xmlHttpRequest, errorThrown) {
+                sendGlobalEvent(option, 'ajaxError', [
+                    xmlHttpRequest,
+                    option,
+                    errorThrown
+                ]);
+                completed(option, xmlHttpRequest);
+            }
+            JQueryEventTrigger.error = error;
+            ;
+            function success(option, xmlHttpRequest) {
+                sendGlobalEvent(option, 'ajaxSuccess', [
+                    xmlHttpRequest,
+                    option
+                ]);
+                completed(option, xmlHttpRequest);
+            }
+            JQueryEventTrigger.success = success;
+            ;
+            function completed(option, xmlHttpRequest) {
+                sendGlobalEvent(option, 'ajaxComplete', [
+                    xmlHttpRequest,
+                    option
+                ]);
+                if (!--$.active) {
+                    sendGlobalEvent(option, 'ajaxStop');
+                }
+            }
+            ;
+            function sendGlobalEvent(option, eventName, parameters) {
+                if (!option.global) {
+                    return;
+                }
+                $.event.trigger(eventName, parameters);
+            }
+            ;
+        }(JQueryEventTrigger = AjaxFileJQuery.JQueryEventTrigger || (AjaxFileJQuery.JQueryEventTrigger = {})));
+    }(AjaxFileJQuery || (AjaxFileJQuery = {})));
+    ;
+    var AjaxFileJQuery;
+    (function (AjaxFileJQuery) {
         'use strict';
-        function send(option, xmlHttpRequest) {
-            if ($.active++ === 0) {
-                sendGlobalEvent(option, 'ajaxStart');
+        function convertToDataType(dataType) {
+            dataType = dataType && dataType.toLowerCase();
+            if (dataType === 'xml') {
+                return DataType.Xml;
+            } else if (dataType === 'text') {
+                return DataType.Text;
             }
-            sendGlobalEvent(option, 'ajaxSend', [
-                xmlHttpRequest,
-                option
-            ]);
-        }
-        JQueryEventTrigger.send = send;
-        ;
-        function error(option, xmlHttpRequest, errorThrown) {
-            sendGlobalEvent(option, 'ajaxError', [
-                xmlHttpRequest,
-                option,
-                errorThrown
-            ]);
-            completed(option, xmlHttpRequest);
-        }
-        JQueryEventTrigger.error = error;
-        ;
-        function success(option, xmlHttpRequest) {
-            sendGlobalEvent(option, 'ajaxSuccess', [
-                xmlHttpRequest,
-                option
-            ]);
-            completed(option, xmlHttpRequest);
-        }
-        JQueryEventTrigger.success = success;
-        ;
-        function completed(option, xmlHttpRequest) {
-            sendGlobalEvent(option, 'ajaxComplete', [
-                xmlHttpRequest,
-                option
-            ]);
-            if (!--$.active) {
-                sendGlobalEvent(option, 'ajaxStop');
-            }
+            return DataType.Json;
         }
         ;
-        function sendGlobalEvent(option, eventName, parameters) {
-            if (!option.global) {
-                return;
-            }
-            $.event.trigger(eventName, parameters);
+        function convertJqueryOptionToOption(jqueryOption) {
+            return {
+                method: jqueryOption.type,
+                url: jqueryOption.url,
+                data: jqueryOption.data,
+                files: jqueryOption.files,
+                desiredResponseDataType: convertToDataType(jqueryOption.dataType),
+                timeoutInSeconds: (jqueryOption.timeout || 0) * 10000
+            };
         }
+        AjaxFileJQuery.convertJqueryOptionToOption = convertJqueryOptionToOption;
         ;
-    }(JQueryEventTrigger || (JQueryEventTrigger = {})));
-    ;
-    function convertToDataType(dataType) {
-        dataType = dataType && dataType.toLowerCase();
-        if (dataType === 'xml') {
-            return DataType.Xml;
-        } else if (dataType === 'text') {
-            return DataType.Text;
+    }(AjaxFileJQuery || (AjaxFileJQuery = {})));
+    var AjaxFileJQuery;
+    (function (AjaxFileJQuery) {
+        'use strict';
+        function generateJqueryXHR(result, queryOption, option, promise) {
+            result = result || {};
+            var status = result.status;
+            return {
+                readyState: 0,
+                status: status && status.code || 0,
+                statusText: status && status.text || 'n/a',
+                responseXML: option.desiredResponseDataType === DataType.Xml ? result.data : null,
+                responseText: option.desiredResponseDataType === DataType.Text ? result.data : null,
+                abort: function () {
+                    promise.abord();
+                },
+                setRequestHeader: function () {
+                    throw 'not supported';
+                },
+                getAllResponseHeaders: function () {
+                    return '';
+                },
+                getResponseHeader: function (header) {
+                    return header.toLowerCase() === 'content-type' ? queryOption.dataType : undefined;
+                }
+            };
         }
-        return DataType.Json;
-    }
-    ;
-    function convertJqueryOptionToOption(jqueryOption) {
-        return {
-            method: jqueryOption.type,
-            url: jqueryOption.url,
-            data: jqueryOption.data,
-            files: jqueryOption.files,
-            desiredResponseDataType: convertToDataType(jqueryOption.dataType),
-            timeoutInSeconds: (jqueryOption.timeout || 0) * 10000
-        };
-    }
-    ;
-    function generateJqueryXHR(result, queryOption, option, promise) {
-        result = result || {};
-        var status = result.status;
-        return {
-            readyState: 0,
-            status: status && status.code || 0,
-            statusText: status && status.text || 'n/a',
-            responseXML: option.desiredResponseDataType === DataType.Xml ? result.data : null,
-            responseText: option.desiredResponseDataType === DataType.Text ? result.data : null,
-            abort: function () {
-                promise.abord();
-            },
-            setRequestHeader: function () {
-                throw 'not supported';
-            },
-            getAllResponseHeaders: function () {
-                return '';
-            },
-            getResponseHeader: function (header) {
-                return header.toLowerCase() === 'content-type' ? queryOption.dataType : undefined;
-            }
-        };
-    }
-    ;
-    return AjaxFile;
+        AjaxFileJQuery.generateJqueryXHR = generateJqueryXHR;
+        ;
+    }(AjaxFileJQuery || (AjaxFileJQuery = {})));
+    return ajaxFile;
 }));

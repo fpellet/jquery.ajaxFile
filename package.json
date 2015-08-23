@@ -1,6 +1,6 @@
 {
   "name": "jquery.ajaxFile",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "jquery.ajaxFile\r ===============",
   "scripts": {
     "test": "node_modules/.bin/gulp test",
