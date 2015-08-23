@@ -20,6 +20,7 @@ var del = require('del');
 var typescript = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
 var batch = require('gulp-batch');
+var tslint = require('gulp-tslint');
 
 var taskAsync = require('./taskAsync');
 var scriptWrapper = require('./scriptWrapper');
@@ -63,6 +64,12 @@ gulp.task('build-test-ts', function () {
             .pipe(concat(scriptNameForTest))
 		.pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(testPath));
+});
+
+gulp.task('check-ts', function() {
+    return gulp.src([sourceFilesWithJQuery, testFiles])
+			.pipe(tslint())
+			.pipe(tslint.report('verbose'));
 });
 
 gulp.task('watch-ts', function () {
