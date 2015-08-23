@@ -1,23 +1,27 @@
-﻿function convertToDataType(dataType: string): DataType {
-    dataType = dataType && dataType.toLowerCase();
-    if (dataType === 'xml') {
-        return DataType.Xml;
-    } else if (dataType === 'text') {
-        return DataType.Text;
-    }
+﻿namespace AjaxFileJQuery {
+    'use strict';
 
-    return DataType.Json;
-};
+    function convertToDataType(dataType: string): DataType {
+        dataType = dataType && dataType.toLowerCase();
+        if (dataType === 'xml') {
+            return DataType.Xml;
+        } else if (dataType === 'text') {
+            return DataType.Text;
+        }
 
-function convertJqueryOptionToOption(jqueryOption: IJqueryOption): IOption {
-    return {
-        method: jqueryOption.type,
-        url: jqueryOption.url,
-
-        data: jqueryOption.data,
-        files: jqueryOption.files,
-        desiredResponseDataType: convertToDataType(jqueryOption.dataType),
-
-        timeoutInSeconds: (jqueryOption.timeout || 0) * 10000
+        return DataType.Json;
     };
-};
+
+    export function convertJqueryOptionToOption(jqueryOption: IJQueryOption): IOption {
+        return {
+            method: jqueryOption.type,
+            url: jqueryOption.url,
+
+            data: jqueryOption.data,
+            files: jqueryOption.files,
+            desiredResponseDataType: convertToDataType(jqueryOption.dataType),
+
+            timeoutInSeconds: (jqueryOption.timeout || 0) * 10000
+        };
+    };
+}

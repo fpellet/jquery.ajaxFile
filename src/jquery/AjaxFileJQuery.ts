@@ -1,7 +1,7 @@
 ﻿namespace AjaxFileJQuery {
     'use strict';
 
-    function convertAjaxFilePromiseToDeferred(promise: IAjaxFilePromise, queryOption: IJqueryOption, option: IOption): JQueryDeferred<any> {
+    function convertAjaxFilePromiseToDeferred(promise: IAjaxFilePromise, queryOption: IJQueryOption, option: IOption): JQueryDeferred<any> {
         const deferred = $.Deferred();
 
         const eventTrigger = JQueryEventTrigger;
@@ -33,13 +33,13 @@
         return deferred;
     };
 
-    function generateOption(jqueryOption: IJqueryOption): IOption {
+    function generateOption(jqueryOption: IJQueryOption): IOption {
         const option = convertJqueryOptionToOption(jqueryOption);
         const defaultSettings = convertJqueryOptionToOption($.ajaxSettings);
         return $.extend(true, {}, defaultSettings, defaultOption, option);
     };
 
-    $.fn.ajaxWithFile = (jqueryOption: IJqueryOption): JQueryDeferred<any> => {
+    $.fn.ajaxWithFile = (jqueryOption: IJQueryOption): JQueryDeferred<any> => {
         const option = generateOption(jqueryOption);
 
         const result = AjaxFile.send(option);
