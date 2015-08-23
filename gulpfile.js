@@ -1,6 +1,6 @@
 var sourceFilesWithoutJQuery = 'src/*.ts';
 var sourceFilesWithJQuery = 'src/**/*.ts';
-var sourceFilesOfKnockoutPlugin = 'plugin/ajaxFile.knockout.ts';
+var sourceFilesOfKnockoutPlugin = 'plugin/*.ts';
 
 var scriptNameWithoutJquery = 'ajaxFile';
 var scriptNameWithJquery = scriptNameWithoutJquery + '.jquery';
