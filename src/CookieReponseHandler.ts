@@ -1,14 +1,14 @@
-﻿var readCookie = (name: string) => {
-    var value = (document.cookie.match('(^|; )' + name + '=([^;]*)') || 0)[2];
+﻿function readCookie(name: string): string {
+    const value = (document.cookie.match(`(^|; )${name}=([^;]*)`) || 0)[2];
 
     return decodeURIComponent(value) || null;
 };
 
-var hasCookie = (name: string): boolean => {
-    return document.cookie.indexOf(name + "=") != -1;
+function hasCookie(name: string): boolean {
+    return document.cookie.indexOf(name + '=') !== -1;
 };
 
-var clearCookie = (name: string) => {
+function clearCookie(name: string): void {
     document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 };
 
@@ -21,13 +21,13 @@ class CookieReponseHandler {
         this.cookieName = id;
     }
 
-    onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void) {
+    public onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void {
         this.receivedCallback = receivedCallback;
 
         setTimeout(() => this.checkCookie(), 100);
     }
 
-    private checkCookie() {
+    private checkCookie(): void {
         if (this.disposed) {
             return;
         }
@@ -37,16 +37,16 @@ class CookieReponseHandler {
             return;
         }
 
-        var value = readCookie(this.cookieName);
+        const value = readCookie(this.cookieName);
 
-        var response = createCookieResponseDocument(value);
+        const response = createCookieResponseDocument(value);
         this.receivedCallback(response);
     }
 
-    dispose() {
+    public dispose(): void {
         this.disposed = true;
 
         clearCookie(this.cookieName);
         this.receivedCallback = null;
     }
-} 
+}

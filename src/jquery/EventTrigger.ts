@@ -1,7 +1,9 @@
-﻿module JQueryEventTrigger {
+﻿namespace JQueryEventTrigger {
+    'use strict';
+
     declare var $: any;
 
-    export var send = (option: IJqueryOption, xmlHttpRequest: IJQueryXHR) => {
+    export function send(option: IJqueryOption, xmlHttpRequest: IJQueryXHR): void {
         if ($.active++ === 0) {
             sendGlobalEvent(option, 'ajaxStart');
         }
@@ -9,17 +11,17 @@
         sendGlobalEvent(option, 'ajaxSend', [xmlHttpRequest, option]);
     };
 
-    export var error = (option: IJqueryOption, xmlHttpRequest: IJQueryXHR, errorThrown?: string) => {
+    export function error(option: IJqueryOption, xmlHttpRequest: IJQueryXHR, errorThrown?: string): void {
         sendGlobalEvent(option, 'ajaxError', [xmlHttpRequest, option, errorThrown]);
         completed(option, xmlHttpRequest);
     };
 
-    export var success = (option: IJqueryOption, xmlHttpRequest: IJQueryXHR) => {
+    export function success(option: IJqueryOption, xmlHttpRequest: IJQueryXHR): void {
         sendGlobalEvent(option, 'ajaxSuccess', [xmlHttpRequest, option]);
         completed(option, xmlHttpRequest);
     };
 
-    var completed = (option: IJqueryOption, xmlHttpRequest: IJQueryXHR) => {
+    function completed(option: IJqueryOption, xmlHttpRequest: IJQueryXHR): void {
         sendGlobalEvent(option, 'ajaxComplete', [xmlHttpRequest, option]);
 
         if (!--$.active) {
@@ -27,7 +29,7 @@
         }
     };
 
-    var sendGlobalEvent = (option: IJqueryOption, eventName: string, parameters?: any) => {
+    function sendGlobalEvent(option: IJqueryOption, eventName: string, parameters?: any): void {
         if (!option.global) {
             return;
         }

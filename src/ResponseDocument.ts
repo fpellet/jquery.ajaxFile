@@ -1,8 +1,8 @@
 ﻿interface IResponseDocument {
-    read(desiredDataType: DataType) : IAjaxFileResult;
+    read(desiredDataType: DataType): IAjaxFileResult;
 }
 
-var createErrorResponseDocument = (error: string): IResponseDocument => {
+function createErrorResponseDocument(error: string): IResponseDocument {
     return {
         read: (): IAjaxFileResult => {
             throw error;
@@ -10,10 +10,10 @@ var createErrorResponseDocument = (error: string): IResponseDocument => {
     };
 };
 
-var createCookieResponseDocument = (value: string): IResponseDocument => {
+function createCookieResponseDocument(value: string): IResponseDocument {
     return {
-        read(desiredDataType: DataType) {
-            var data = parse(value, desiredDataType);
+        read(desiredDataType: DataType): IAjaxFileResult {
+            const  data = parse(value, desiredDataType);
 
             return { status: extractStatus(), data: data };
         }
@@ -29,7 +29,7 @@ class FormResponseDocument {
         this.origineUrl = origineUrl;
     }
 
-    isLoaded(): boolean {
+    public isLoaded(): boolean {
         if (!this.hrefHasChanged()) {
             return false;
         }
@@ -42,24 +42,24 @@ class FormResponseDocument {
     }
 
     private hrefHasChanged(): boolean {
-        return this.document.location.href != this.origineUrl;
+        return this.document.location.href !== this.origineUrl;
     }
 
-    private isXml() {
+    private isXml(): void {
         return this.document.XMLDocument || $.isXMLDoc(this.document);
     }
 
-    read(desiredDataType: DataType): IAjaxFileResult {
-        var container = this.searchContainer();
+    public read(desiredDataType: DataType): IAjaxFileResult {
+        const container = this.searchContainer();
 
-        var status = extractStatus(container);
-        var data = parse(container.val(), desiredDataType);
+        const status = extractStatus(container);
+        const data = parse(container.val(), desiredDataType);
 
         return { status: status, data: data };
     }
 
     private searchContainer(): JQuery {
-        var container = this.document.getElementsByTagName('textarea')[0];
+        const container = this.document.getElementsByTagName('textarea')[0];
         if (!container) {
             throw 'Cannot find textarea in response';
         }
@@ -68,44 +68,41 @@ class FormResponseDocument {
     }
 }
 
-var extractStatus = (container?: JQuery): IResponseStatus => {
-    var status: IResponseStatus = {
+function extractStatus(container?: JQuery): IResponseStatus {
+    const status: IResponseStatus = {
         code: 200,
         text: 'OK',
-        isSuccess: true,
+        isSuccess: true
     };
 
     if (container) {
-        var code = Number(container.attr('statusCode')) || status.code;
+        const code = Number(container.attr('statusCode')) || status.code;
         status.code = code;
         status.text = container.attr('statusText') || status.text;
         status.isSuccess = code >= 200 && code < 300 || code === 304;
-    };
+    }
 
     return status;
 };
 
-var parse = (value: string, desiredDataType: DataType) => {
+function parse(value: string, desiredDataType: DataType): any {
     if (!value) {
         return null;
     }
 
-    if (desiredDataType == DataType.Text) {
-        return value;
+    switch (desiredDataType) {
+        case DataType.Text:
+            return value;
+        case DataType.Json:
+            return $.parseJSON(value);
+        case DataType.Xml:
+            const xml = $.parseXML(value);
+            if (xml.documentElement.nodeName === 'parsererror') {
+                throw 'parsererror';
+            }
+
+            return xml;
+        default:
+            throw 'Invalid datatype : ' + desiredDataType;
     }
-
-    if (desiredDataType == DataType.Json) {
-        return $.parseJSON(value);
-    }
-
-    if (desiredDataType == DataType.Xml) {
-        var xml = $.parseXML(value);
-        if (xml.documentElement.nodeName === 'parsererror') {
-            throw 'parsererror';
-        }
-
-        return xml;
-    }
-
-    throw 'Invalid datatype : ' + desiredDataType;
 };

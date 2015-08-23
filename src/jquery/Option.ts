@@ -1,15 +1,15 @@
-﻿var convertToDataType = (dataType: string) => {
+﻿function convertToDataType(dataType: string): DataType {
     dataType = dataType && dataType.toLowerCase();
-    if (dataType == 'xml') {
+    if (dataType === 'xml') {
         return DataType.Xml;
-    } else if (dataType == 'text') {
+    } else if (dataType === 'text') {
         return DataType.Text;
     }
 
     return DataType.Json;
 };
 
-var convertJqueryOptionToOption = (jqueryOption: IJqueryOption): IOption => {
+function convertJqueryOptionToOption(jqueryOption: IJqueryOption): IOption {
     return {
         method: jqueryOption.type,
         url: jqueryOption.url,
@@ -18,6 +18,6 @@ var convertJqueryOptionToOption = (jqueryOption: IJqueryOption): IOption => {
         files: jqueryOption.files,
         desiredResponseDataType: convertToDataType(jqueryOption.dataType),
 
-        timeoutInSeconds: (jqueryOption.timeout || 0) * 10000,
+        timeoutInSeconds: (jqueryOption.timeout || 0) * 10000
     };
 };

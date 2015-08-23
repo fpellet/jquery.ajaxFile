@@ -2,7 +2,7 @@
     private handlers: IReponseHandler[];
 
     constructor(id: string) {
-        var cookieHandler: IReponseHandler = new CookieReponseHandler(id);
+        const cookieHandler: IReponseHandler = new CookieReponseHandler(id);
         this.handlers = [
             new TimeoutResponseHandler(),
             new FormResponseHandler(),
@@ -10,15 +10,15 @@
         ];
     }
 
-    onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void) {
+    public onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void {
         this.handlers.forEach((handler) => {
             handler.onReceived(option, form, receivedCallback);
         });
     }
 
-    dispose() {
+    public dispose(): void {
         this.handlers.forEach((handler) => {
             handler.dispose();
         });
     }
-} 
+}

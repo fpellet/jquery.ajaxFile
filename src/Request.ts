@@ -1,4 +1,6 @@
-﻿var generateRequestId = (): string => 'ajaxFile' + (new Date().getTime());
+﻿function generateRequestId(): string {
+    return 'ajaxFile' + (new Date().getTime());
+}
 
 class Request {
     private option: IOption;
@@ -7,7 +9,7 @@ class Request {
     private responseHandler: IReponseHandler;
     private id: string;
 
-    private successCallback : IAjaxFileResultCallback;
+    private successCallback: IAjaxFileResultCallback;
     private errorCallback: IAjaxFileResultCallback;
 
     constructor(option: IOption) {
@@ -16,12 +18,12 @@ class Request {
         this.responseHandler = new ReponseHandlerDispatcher(this.id);
     }
 
-    initialize() {
+    public initialize(): void {
         this.form = Form.createForm(this.option, this.id);
     }
 
-    submit(): IAjaxFilePromise {
-        var promise = new AjaxFilePromise(() => this.abord(), (successCallback, errorCallback) => {
+    public submit(): IAjaxFilePromise {
+        const promise = new AjaxFilePromise(() => this.abord(), (successCallback, errorCallback) => {
             this.successCallback = successCallback;
             this.errorCallback = errorCallback;
         });
@@ -31,7 +33,7 @@ class Request {
         return promise.always(() => this.dispose());
     }
 
-    private send() {
+    private send(): void {
         if (this.isCompleted) {
             return;
         }
@@ -45,13 +47,13 @@ class Request {
         }
     }
 
-    private onResponseReceived(response: IResponseDocument) {
+    private onResponseReceived(response: IResponseDocument): void {
         if (this.isCompleted) {
             return;
         }
 
         try {
-            var result = response.read(this.option.desiredResponseDataType);
+            const result = response.read(this.option.desiredResponseDataType);
 
             if (result.status.isSuccess) {
                 this.successCallback(result);
@@ -65,11 +67,11 @@ class Request {
         this.isCompleted = true;
     }
 
-    abord(reason?: string) {
+    public abord(reason?: string): void {
         this.onError(reason || 'cancelled');
     }
 
-    private onError(error: any, status?: IResponseStatus, data?: any) {
+    private onError(error: any, status?: IResponseStatus, data?: any): void {
         if (this.isCompleted) {
             return;
         }
@@ -80,7 +82,7 @@ class Request {
         this.errorCallback({ status: status, data: data, error: error });
     }
 
-    dispose() {
+    public dispose(): void {
         this.isCompleted = true;
 
         if (this.form) {

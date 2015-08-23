@@ -10,6 +10,8 @@ var scriptNameForTest = 'merge.js';
 
 var distPath = 'dist';
 
+var externalLibTypingFile = "typings/tsd.d.ts";
+
 
 var gulp = require('gulp');
 var concat = require('gulp-concat');
@@ -31,7 +33,7 @@ gulp.task('clean-build', function (done) {
 
 var compileTypeScriptSources = function(sourceFiles, outputName) {
     return gulp
-        .src(sourceFiles)
+        .src([sourceFiles, externalLibTypingFile])
         .pipe(sourcemaps.init())
             .pipe(typescript())
             .pipe(concat(outputName + '.js'))
@@ -58,7 +60,7 @@ gulp.task('build', function () {
 });
 
 gulp.task('build-test-ts', function () {
-    return gulp.src([sourceFilesWithJQuery, testFiles])
+    return gulp.src([sourceFilesWithJQuery, testFiles, externalLibTypingFile])
         .pipe(sourcemaps.init())
             .pipe(typescript())
             .pipe(concat(scriptNameForTest))

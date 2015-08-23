@@ -1,36 +1,47 @@
-﻿/// <reference path="utils.ts" />
-var getCurrentUrlWithoutHash = (): string => {
-    var currentUrl = window.location.href;
+﻿function getCurrentUrlWithoutHash(): string {
+    const currentUrl = window.location.href;
     return (currentUrl.match(/^([^#]+)/) || [])[1];
-};
+}
 
-var currentPageIsHttpsMode = (): boolean => urlIsHttpsMode(window.location.href);
+function currentPageIsHttpsMode(): boolean {
+     return urlIsHttpsMode(window.location.href);
+}
 
-var urlIsHttpsMode = (url: string): boolean => /^https/i.test(url || '');
+function urlIsHttpsMode(url: string): boolean {
+    return /^https/i.test(url || '');
+}
 
-module JsonToPostDataConverter {
+namespace JsonToPostDataConverter {
+    'use strict';
+
     export interface IData {
         name: string;
         value: string;
     }
 
-    var pushParameters = (results: IData[], data: any, prefix?: string) => {
+    function pushParameters(results: IData[], data: any, prefix?: string): void {
         if (!data) {
             return;
         }
 
-        for (var propertyName in data) {
-            var value = data[propertyName];
-            if(!value) continue;
+        for (let propertyName in data) {
+            if (!data.hasOwnProperty(propertyName)) {
+                continue;
+            }
+
+            const value = data[propertyName];
+            if (!value) {
+                continue;
+            }
 
             pushParameterOfProperty(results, propertyName, data[propertyName], prefix);
         }
     };
 
-    var pushParameterOfProperty = (results: IData[], propertyName: string, value: any, prefix?: string) => {
-        var parameterName = prefix ? prefix + '[' + propertyName + ']' : propertyName;
+    function pushParameterOfProperty(results: IData[], propertyName: string, value: any, prefix?: string): void {
+        const parameterName = prefix ? prefix + '[' + propertyName + ']' : propertyName;
 
-        var type = Object.prototype.toString.call(value);
+        const type = Object.prototype.toString.call(value);
 
         if (type === '[object Array]') {
             value.forEach((item, index) => {
@@ -39,7 +50,7 @@ module JsonToPostDataConverter {
             return;
         }
 
-        if (type == '[object Object]') {
+        if (type === '[object Object]') {
             pushParameters(results, value, parameterName);
             return;
         }
@@ -47,8 +58,8 @@ module JsonToPostDataConverter {
         results.push({ name: parameterName, value: value + '' });
     };
 
-    export var convert = (data: any): IData[]=> {
-        var result = [];
+    export function convert(data: any): IData[] {
+        const result = [];
 
         pushParameters(result, data);
 

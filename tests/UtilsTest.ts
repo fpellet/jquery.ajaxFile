@@ -1,15 +1,11 @@
-/// <reference path="../src/utils.ts" />
-/// <reference path="../typings/tsd.d.ts" />
+describe('Utils', () => {
+    const expect = chai.expect;
 
-var expect = chai.expect;
-var assert = chai.assert;
+    it('map array for old navigator', () => {
+        const values = [5, 6, 7];
 
-describe("Utils", () => {
-    it("map array for old navigator", () => {
-        var values = [5, 6, 7];
+        const result = map(values, value => value + 1);
 
-        var result = map(values, value => value + 1);
-
-        expect(result).to.eql([6,7,8]);
+        expect(result).to.eql([6, 7, 8]);
     });
 });

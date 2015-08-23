@@ -2,16 +2,16 @@
     private receivedCallback: (response: IResponseDocument) => void;
     private form: Form.IForm;
 
-    onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void) {
+    public onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void {
         this.form = form;
         this.form.onLoaded(() => this.onStateUpdated());
 
         this.receivedCallback = receivedCallback;
     }
 
-    private onStateUpdated() {
+    private onStateUpdated(): void {
         try {
-            var documentOfIFrame = this.form.getResponseDocument();
+            const documentOfIFrame = this.form.getResponseDocument();
             if (!documentOfIFrame) {
                 this.receivedCallback(createErrorResponseDocument('server abort'));
                 return;
@@ -28,7 +28,7 @@
         }
     }
 
-    dispose() {
+    public dispose(): void {
         if (this.form) {
             this.form.dispose();
             this.form = null;

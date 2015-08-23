@@ -1,4 +1,6 @@
-﻿module Form {
+﻿namespace Form {
+    'use strict';
+
     export interface IForm {
         onLoaded(loadCallback: () => void): void;
         submit(): void;
@@ -21,42 +23,42 @@
             this.option = option;
         }
 
-        initialize(requestId: string) {
+        public initialize(requestId: string): void {
             this.addRequestIdInData(requestId);
 
             this.formFragment = createFormFragment(this.option, requestId);
             insertFormFragment(this.formFragment);
         }
 
-        private addRequestIdInData(requestId: string) {
+        private addRequestIdInData(requestId: string): void {
             this.option.data.__requestId = requestId;
         }
 
-        onLoaded(loadCallback: () => void) {
-            var iframe = this.formFragment.iframe;
+        public onLoaded(loadCallback: () => void): void {
+            const iframe = this.formFragment.iframe;
 
             iframe.on('load', loadCallback);
         }
 
-        submit() {
+        public submit(): void {
             this.formFragment.form.submit();
         }
 
-        getResponseDocument(): FormResponseDocument {
-            var document = getDocumentOfIFrame(this.formFragment.iframe);
+        public getResponseDocument(): FormResponseDocument {
+            const document = getDocumentOfIFrame(this.formFragment.iframe);
             if (!document) {
                 throw 'server abort';
             }
 
-            var orgineUrl = this.formFragment.iframe.attr('origineSrc');
+            const orgineUrl = this.formFragment.iframe.attr('origineSrc');
             return new FormResponseDocument(document, orgineUrl);
         }
 
-        abord() {
+        public abord(): void {
             abordIFrame(this.formFragment.iframe);
         }
 
-        dispose() {
+        public dispose(): void {
             if (this.formFragment) {
                 this.formFragment.container.remove();
 
@@ -65,10 +67,10 @@
         }
     }
 
-    var abordIFrame = ($iframe: JQuery) => {
+    function abordIFrame($iframe: JQuery): void {
         try { // for ie
-            var iframe = <HTMLIFrameElement>$iframe[0];
-            var documentOfIFrame = iframe.contentWindow.document;
+            const iframe = <HTMLIFrameElement>$iframe[0];
+            const documentOfIFrame = iframe.contentWindow.document;
             if (documentOfIFrame.execCommand) {
                 documentOfIFrame.execCommand('Stop');
             }
@@ -78,12 +80,12 @@
         $iframe.attr('src', $iframe.attr('origineSrc'));
     };
 
-    var createFormFragment = (option: IOption, requestId: string): IFormFragment => {
+    function createFormFragment(option: IOption, requestId: string): IFormFragment {
         option.data.__requestId = requestId;
-        var iframe = createIFrame(requestId, currentPageIsHttpsMode());
-        var form = createHtmlForm(option, requestId);
+        const iframe = createIFrame(requestId, currentPageIsHttpsMode());
+        const form = createHtmlForm(option, requestId);
 
-        var container = $('<div></div>');
+        const container = $('<div></div>');
         container.hide();
         container.append(iframe);
         container.append(form);
@@ -91,18 +93,18 @@
         return { container: container, form: form, iframe: iframe };
     };
 
-    var insertFormFragment = (formFragment: IFormFragment) => {
+    function insertFormFragment(formFragment: IFormFragment): void {
         formFragment.container.appendTo('body');
     };
 
-    var getDocumentOfIFrame = ($iframe: JQuery): Document => {
-        var iframe = <HTMLIFrameElement>$iframe[0];
+    function getDocumentOfIFrame($iframe: JQuery): Document {
+        const iframe = <HTMLIFrameElement>$iframe[0];
         try {
             if (iframe.contentWindow) {
                 return iframe.contentWindow.document;
             }
         } catch (ignore) {
-            // IE8 access denied under ssl & missing protocol
+            // ie8 access denied under ssl & missing protocol
         }
 
         try {
@@ -114,24 +116,24 @@
         return (<any>iframe).document;
     };
 
-    var createIFrame = (id: string, isHttps: boolean): JQuery => {
-        var iframe = $('<iframe name="' + id + '"></iframe>');
-        var src = isHttps ? 'javascript:false' : 'about:blank';
+    function createIFrame(id: string, isHttps: boolean): JQuery {
+        const iframe = $('<iframe name="' + id + '"></iframe>');
+        const src = isHttps ? 'javascript:false' : 'about:blank';
         iframe.attr('src', src);
         iframe.attr('origineSrc', src);
 
         return iframe;
     }
 
-    var createHtmlForm = (option: IOption, iframeId: string): JQuery => {
-        var form = $('<form></form>');
+    function createHtmlForm(option: IOption, iframeId: string): JQuery {
+        const form = $('<form></form>');
         form.attr('method', option.method);
         form.attr('action', option.url);
         form.attr('target', iframeId);
-        form.attr('encoding', "multipart/form-data");
-        form.attr('enctype', "multipart/form-data");
+        form.attr('encoding', 'multipart/form-data');
+        form.attr('enctype', 'multipart/form-data');
 
-        if (option.method.toLowerCase() == 'GET') {
+        if (option.method.toLowerCase() === 'GET') {
             applyGetMethodOnForm(form, option);
         } else {
             applyPostMethodOnForm(form, option);
@@ -142,14 +144,14 @@
         return form;
     };
 
-    var cloneAndMoveInputFiles = (form: JQuery, files: IFileData[]) => {
+    function cloneAndMoveInputFiles(form: JQuery, files: IFileData[]): void {
         $.each(files, (num, file) => {
             cloneAndMoveInputFile(form, file);
         });
     };
 
-    var cloneAndMoveInputFile = (form: JQuery, file: IFileData) => {
-        var input = $(file.element);
+    function cloneAndMoveInputFile(form: JQuery, file: IFileData): void {
+        const input = $(file.element);
 
         input.replaceWith(input.clone(true, true));
 
@@ -159,25 +161,27 @@
         form.append(file.element);
     };
 
-    var urlHasAlreadyParameters = (url: string): boolean => url.indexOf('?') != -1;
+    function urlHasAlreadyParameters(url: string): boolean {
+        return url.indexOf('?') !== -1;
+    }
 
-    var applyGetMethodOnForm = (form: JQuery, option: IOption): JQuery => {
-        var urlParameters = $.param(option.data);
+    function applyGetMethodOnForm(form: JQuery, option: IOption): JQuery {
+        const urlParameters = $.param(option.data);
 
-        var url = option.url + (urlHasAlreadyParameters(option.url) ? '&' : '?') + urlParameters;
+        const url = option.url + (urlHasAlreadyParameters(option.url) ? '&' : '?') + urlParameters;
 
         form.attr('action', url);
 
         return form;
     };
 
-    var applyPostMethodOnForm = (form: JQuery, option: IOption): JQuery => {
+    function applyPostMethodOnForm(form: JQuery, option: IOption): JQuery {
         form.attr('action', option.url);
 
-        var parameters = JsonToPostDataConverter.convert(option.data);
+        const parameters = JsonToPostDataConverter.convert(option.data);
 
         $.each(parameters, (num, parameter) => {
-            var input = $('<input type="hidden" />');
+            const input = $('<input type="hidden" />');
             input.attr('name', parameter.name);
             input.val(parameter.value);
 
@@ -187,8 +191,8 @@
         return form;
     };
 
-    export var createForm = (option: IOption, requestId: string): IForm => {
-        var form = new Form(option);
+    export function createForm(option: IOption, requestId: string): IForm {
+        const form = new Form(option);
         form.initialize(requestId);
 
         return form;

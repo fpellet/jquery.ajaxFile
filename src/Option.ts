@@ -1,4 +1,4 @@
-﻿var defaultOption: IOption = {
+﻿let defaultOption: IOption = {
     data: {},
     files: [],
     desiredResponseDataType: DataType.Json,
@@ -6,7 +6,7 @@
     timeoutInSeconds: 60
 };
 
-var mergeWithDefaultOption = (option: IOption): IOption => {
+function mergeWithDefaultOption(option: IOption): IOption {
     option = $.extend(true, {}, defaultOption, option);
 
     if (!option.url) {

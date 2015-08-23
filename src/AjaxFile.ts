@@ -1,10 +1,10 @@
-/// <reference path="../typings/jquery/jquery.d.ts" />
+namespace AjaxFile {
+    'use strict';
 
-module AjaxFile {
-    export var send = (option: IOption): IAjaxFilePromise => {
+    export function send(option: IOption): IAjaxFilePromise {
         option = mergeWithDefaultOption(option);
 
-        var request = new Request(option);
+        const request = new Request(option);
         request.initialize();
         return request.submit();
     }

@@ -1,52 +1,49 @@
-/// <reference path="../src/url.ts" />
-/// <reference path="../typings/tsd.d.ts" />
+describe('Url', () => {
+    const expect = chai.expect;
+    const assert = chai.assert;
 
-var expect = chai.expect;
-var assert = chai.assert;
+    const currentUrl = window.location.href;
 
-describe("Url", () => {
-    var currentUrl = window.location.href;
-
-    it("When call getCurrentUrlWithoutHash then return current url", () => {
-        var result = getCurrentUrlWithoutHash();
+    it('When call getCurrentUrlWithoutHash then return current url', () => {
+        const result = getCurrentUrlWithoutHash();
 
         expect(result).to.equals(currentUrl);
     });
 
-    it("Given current url with hash When call getCurrentUrlWithoutHash then return current url without hash", () => {
-        window.location.href += "#home";
+    it('Given current url with hash When call getCurrentUrlWithoutHash then return current url without hash', () => {
+        window.location.href += '#home';
 
-        var result = getCurrentUrlWithoutHash();
+        const result = getCurrentUrlWithoutHash();
 
         expect(result).to.equals(currentUrl);
     });
 
-    it("Given url on http When call urlIsHttpsMode then return false", () => {
-        var result = urlIsHttpsMode('http://localhost/');
+    it('Given url on http When call urlIsHttpsMode then return false', () => {
+        const result = urlIsHttpsMode('http://localhost/');
 
         assert.notOk(result);
     });
 
-    it("Given url on https When call urlIsHttpsMode then return true", () => {
-        var result = urlIsHttpsMode('https://localhost/');
+    it('Given url on https When call urlIsHttpsMode then return true', () => {
+        const result = urlIsHttpsMode('https://localhost/');
 
         assert.ok(result);
     });
 
-    it("Given url empty When call urlIsHttpsMode then return false", () => {
-        var result = urlIsHttpsMode('');
+    it('Given url empty When call urlIsHttpsMode then return false', () => {
+        const result = urlIsHttpsMode('');
 
         assert.notOk(result);
     });
 
-    it("When call currentPageIsHttpsMode then return result of urlIsHttpsMode on current url", () => {
-        var result = currentPageIsHttpsMode();
+    it('When call currentPageIsHttpsMode then return result of urlIsHttpsMode on current url', () => {
+        const result = currentPageIsHttpsMode();
 
         assert.notOk(result);
     });
 
-    it("When call extractParameters with object then return parameters list for form inputs", () => {
-        var result = JsonToPostDataConverter.convert({
+    it('When call extractParameters with object then return parameters list for form inputs', () => {
+        const result = JsonToPostDataConverter.convert({
             name: 'joe',
             data: {
                 age: 5,
@@ -60,8 +57,8 @@ describe("Url", () => {
         expect(result).to.deep.include({ name: 'data[lastname]', value: 'bob' });
     });
 
-    it("When call extractParameters with collection then return parameters list for form inputs", () => {
-        var result = JsonToPostDataConverter.convert({
+    it('When call extractParameters with collection then return parameters list for form inputs', () => {
+        const result = JsonToPostDataConverter.convert({
             name: 'joe',
             list: [
                 { label: 'bob', size: 5 },
@@ -76,27 +73,27 @@ describe("Url", () => {
         expect(result).to.deep.include({ name: 'list[1][label]', value: 'indien' });
     });
 
-    it("When call extractParameters with special char then return parameters list for form inputs", () => {
-        var result = JsonToPostDataConverter.convert({
+    it('When call extractParameters with special char then return parameters list for form inputs', () => {
+        const result = JsonToPostDataConverter.convert({
             value1: 'joé',
-            value2: 'jo"',
-            value3: '<joe />',
+            value2: 'jo\'',
+            value3: '<joe />'
         });
 
         expect(result).to.have.length(3);
         expect(result[0]).to.deep.include({ name: 'value1', value: 'joé' });
-        expect(result[1]).to.deep.include({ name: 'value2', value: 'jo"' });
+        expect(result[1]).to.deep.include({ name: 'value2', value: 'jo\'' });
         expect(result[2]).to.deep.include({ name: 'value3', value: '<joe />' });
     });
 
-    it("When call extractParameters with no data then return empty parameters list", () => {
-        var result = JsonToPostDataConverter.convert({});
+    it('When call extractParameters with no data then return empty parameters list', () => {
+        const result = JsonToPostDataConverter.convert({});
 
-        expect(result).to.have.length(0); 
+        expect(result).to.have.length(0);
     });
 
-    it("When call extractParameters with empty data then return empty parameters list", () => {
-        var result = JsonToPostDataConverter.convert({ value: '' });
+    it('When call extractParameters with empty data then return empty parameters list', () => {
+        const result = JsonToPostDataConverter.convert({ value: '' });
 
         expect(result).to.have.length(0);
     });

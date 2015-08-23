@@ -42,7 +42,7 @@ interface IAjaxFilePromise {
     fail(error: IAjaxFileResultCallback): IAjaxFilePromise;
     always(error: IAjaxFileResultCallback): IAjaxFilePromise;
 
-    abord();
+    abord(): void;
 }
 
 interface IReponseHandler {
