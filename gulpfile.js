@@ -2,6 +2,10 @@ var sourceFilesWithoutJQuery = 'src/*.ts';
 var sourceFilesWithJQuery = 'src/**/*.ts';
 var sourceFilesOfKnockoutPlugin = 'plugin/*.ts';
 
+var definitionFilesWithoutJQuery = ['src/*.enum.ts', 'src/*.d.ts'];
+var definitionFilesWithJQuery =['src/**/*.enum.ts', 'src/**/*.d.ts'];
+var definitionFilesOfKnockoutPlugin = 'plugin/*.d.ts';
+
 var scriptNameWithoutJquery = 'ajaxFile';
 var scriptNameWithJquery = scriptNameWithoutJquery + '.jquery';
 var scriptNameOfKnockoutPlugin = 'ajaxFile.knockout';
@@ -25,6 +29,7 @@ var typescript = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
 var batch = require('gulp-batch');
 var tslint = require('gulp-tslint');
+var replace = require('gulp-replace');
 
 var taskAsync = require('./taskAsync');
 var scriptWrapper = require('./scriptWrapper');
@@ -63,8 +68,29 @@ gulp.task('build-src-ts-plugin-ko', function () {
 
 gulp.task('build-src-ts', ['build-src-ts-without-jquery', 'build-src-ts-with-jquery', 'build-src-ts-plugin-ko']);
 
+var generateDefinition = function(definitionFiles, outputName) {
+    return gulp.src(definitionFiles)
+        .pipe(replace(/^enum /g, 'declare enum '))
+        .pipe(concat(outputName + '.d.ts'))
+        .pipe(gulp.dest(distPath));
+};
+
+gulp.task('build-definition-ts-without-jquery', function () {
+    return generateDefinition(definitionFilesWithoutJQuery, scriptNameWithoutJquery);
+});
+
+gulp.task('build-definition-ts-with-jquery', function () {
+    return generateDefinition(definitionFilesWithJQuery, scriptNameWithJquery);
+});
+
+gulp.task('build-definition-ts-plugin-ko', function () {
+    return generateDefinition(definitionFilesOfKnockoutPlugin, scriptNameOfKnockoutPlugin);
+});
+
+gulp.task('build-definition-ts', ['build-definition-ts-without-jquery', 'build-definition-ts-with-jquery', 'build-definition-ts-plugin-ko']);
+
 gulp.task('build', function () {
-    return taskAsync.runSequence(['clean-build', 'build-src-ts']);
+    return taskAsync.runSequence(['clean-build', 'build-src-ts', 'build-definition-ts']);
 });
 
 gulp.task('build-test-ts', function () {
