@@ -1,5 +1,5 @@
 /*!
- * AjaxFile.js - V0.0.4
+ * AjaxFile.js - V0.1.0
  * Project repository: https://github.com/fpellet/jquery.ajaxFile
  * Licensed under the MIT license
  */
@@ -23,7 +23,8 @@
             var request = new Request(option);
             request.initialize();
             return request.submit();
-        }
+        },
+        DataType: DataType
     };
     var AjaxFilePromise = function () {
         function AjaxFilePromise(abordCallback, register) {
