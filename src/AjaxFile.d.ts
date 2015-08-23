@@ -1,9 +1,3 @@
-declare enum DataType {
-    Json,
-    Xml,
-    Text
-}
-
 interface IFileData {
     name: string;
     element: HTMLInputElement;

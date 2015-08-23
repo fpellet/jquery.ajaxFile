@@ -25,7 +25,7 @@ var preScript = "(function (factory) {" + "\r\n" +
                 "} (function ($) {" + "\r\n" +
                 "    \"use strict\";" + "\r\n";
 var postScript = "\r\n" +
-                 "return AjaxFile;" + "\r\n" +
+                 "return ajaxFile;" + "\r\n" +
                  "}));" + "\r\n";
 
 var generateTemplate = function() {

@@ -67,6 +67,9 @@
   <ItemGroup>
     <Content Include="src\AjaxFile.d.ts" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\AjaxFile.enum.ts" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
   </PropertyGroup>
