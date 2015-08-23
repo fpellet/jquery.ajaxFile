@@ -1,4 +1,4 @@
-﻿namespace AjaxFile.Knockout {
+﻿namespace AjaxFileKnockout {
     class FileInputWrapper {
         constructor(private input: HTMLInputElement) {
         }
@@ -35,4 +35,4 @@
     }
 }
 
-AjaxFile.Knockout.registerBindingHandler(ko, $);
+AjaxFileKnockout.registerBindingHandler(ko, $);
