@@ -2,9 +2,9 @@
     var api = function() {
         var sendFile = function (input, url) {
             return AjaxFile.send({
-                type: "POST",
+                method: "POST",
                 url: url,
-                dataType: "json",
+                desiredResponseDataType: AjaxFile.DataType.Json,
                 files: [
                   { name: 'joeFile', element: input.getElement() }
                 ],
