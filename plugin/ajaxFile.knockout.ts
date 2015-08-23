@@ -1,5 +1,5 @@
 ﻿namespace AjaxFileKnockout {
-    class FileInputWrapper {
+    class FileInputWrapper implements IFileInputWrapper {
         constructor(private input: HTMLInputElement) {
         }
 
@@ -13,7 +13,7 @@
     }
 
     export function registerBindingHandler(ko: KnockoutStatic, $: JQueryStatic): void {
-        ko.bindingHandlers["file"] = {
+        ko.bindingHandlers.file = {
             init(element, valueAccessor) {
                 $(element).change(function () {
                     const value = valueAccessor();
