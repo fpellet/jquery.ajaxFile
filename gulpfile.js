@@ -77,7 +77,7 @@ gulp.task('build-test-ts', function () {
 });
 
 gulp.task('check-ts', function() {
-    return gulp.src([sourceFilesWithJQuery, testFiles])
+    return gulp.src([sourceFilesWithJQuery, testFiles, sourceFilesOfKnockoutPlugin])
 			.pipe(tslint())
 			.pipe(tslint.report('verbose'));
 });
