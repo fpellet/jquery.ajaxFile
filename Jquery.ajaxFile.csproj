@@ -25,6 +25,7 @@
     <Content Include="karma.conf.js" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />
+    <Content Include="bower.json" />
     <None Include="plugin\ajaxFile.knockout.ts" />
     <Content Include="README.md" />
     <Content Include="scriptWrapper.js" />
