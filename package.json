@@ -1,7 +1,7 @@
 {
-  "name": "jquery.ajaxFile",
-  "version": "0.0.3",
-  "description": "jquery.ajaxFile\r ===============",
+  "name": "jquery.ajaxfile",
+  "version": "0.0.4",
+  "description": "Allow to upload file with old naviagtor",
   "scripts": {
     "test": "node_modules/.bin/gulp test",
     "dev": "node_modules/.bin/gulp dev",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://github.com/fpellet/jquery.ajaxFile.git"
   },
-  "author": "",
+  "author": "fpellet",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/fpellet/jquery.ajaxFile/issues"
