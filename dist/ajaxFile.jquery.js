@@ -1,5 +1,5 @@
 /*!
- * AjaxFile.js - V0.0.3
+ * AjaxFile.js - V0.0.4
  * Project repository: https://github.com/fpellet/jquery.ajaxFile
  * Licensed under the MIT license
  */
