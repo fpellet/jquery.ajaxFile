@@ -25,6 +25,7 @@
     <Content Include="karma.conf.js" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />
+    <TypeScriptCompile Include="plugin\ajaxFile.knockout.ts" />
     <Content Include="README.md" />
     <Content Include="scriptWrapper.js" />
     <Content Include="taskAsync.js" />
@@ -54,6 +55,7 @@
     <TypeScriptCompile Include="tests\UtilsTest.ts" />
     <TypeScriptCompile Include="typings\chai\chai.d.ts" />
     <TypeScriptCompile Include="typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="typings\knockout\knockout.d.ts" />
     <TypeScriptCompile Include="typings\mocha\mocha.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
   </ItemGroup>
