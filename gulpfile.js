@@ -108,6 +108,8 @@ gulp.task('check-ts', function() {
 			.pipe(tslint.report('verbose'));
 });
 
+gulp.task('check', ['check-ts']);
+
 gulp.task('watch-ts', function () {
     watch([testFiles, sourceFilesWithJQuery], batch(function (events, done) {
         gulp.start('build-test-ts', done);

@@ -6,6 +6,7 @@
     "test": "node_modules/.bin/gulp test",
     "dev": "node_modules/.bin/gulp dev",
     "build": "node_modules/.bin/gulp build",
+    "check": "node_modules/.bin/gulp check",
     "postinstall": "node_modules/.bin/tsd install"
   },
   "repository": {
