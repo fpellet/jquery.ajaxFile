@@ -1,4 +1,10 @@
-﻿using Owin;
+﻿using System.IO;
+using System.Web.Hosting;
+using Microsoft.Owin;
+using Microsoft.Owin.Extensions;
+using Microsoft.Owin.FileSystems;
+using Microsoft.Owin.StaticFiles;
+using Owin;
 
 namespace Jquery.AjaxFile.Demo.Runner
 {
@@ -9,8 +15,16 @@ namespace Jquery.AjaxFile.Demo.Runner
 
         public void Configuration(IAppBuilder app)
         {
+            app.UseFileServer(new FileServerOptions
+            {
+                RequestPath = new PathString("/Content"),
+                FileSystem = new PhysicalFileSystem(Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "../../../dist")),
+            });
+
             _apiStartup.Configuration(app);
             _nancyStartup.Configuration(app);
+
+            app.UseStageMarker(PipelineStage.MapHandler);
         }
     }
 }

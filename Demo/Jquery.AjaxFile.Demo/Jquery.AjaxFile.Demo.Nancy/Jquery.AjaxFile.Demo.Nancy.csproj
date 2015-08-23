@@ -70,7 +70,6 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\ajaxFile.jquery.js" />
     <Content Include="Content\ajaxFile.knockout.js" />
     <Content Include="Content\main.css" />
     <Content Include="packages.config" />
