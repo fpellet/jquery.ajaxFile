@@ -26,6 +26,7 @@
     <Content Include="LICENSE" />
     <Content Include="package.json" />
     <Content Include="bower.json" />
+    <Content Include=".npmignore" />
     <None Include="plugin\ajaxFile.knockout.ts" />
     <Content Include="README.md" />
     <Content Include="scriptWrapper.js" />
