@@ -5,5 +5,6 @@ let ajaxFile: IAjaxFileStatic = {
         const request = new Request(option);
         request.initialize();
         return request.submit();
-    }
+    },
+    DataType: DataType
 };
