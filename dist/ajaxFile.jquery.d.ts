@@ -26,27 +26,28 @@ interface IResponseStatus {
     isSuccess: boolean;
 }
 
-interface IAjaxFileResult {
+interface IAjaxFileResult<T> {
     error?: any;
     data?: any;
     status?: IResponseStatus;
 }
 
-interface IAjaxFileResultCallback {
-    (result: IAjaxFileResult);
+interface IAjaxFileResultCallback<T> {
+    (result: IAjaxFileResult<T>);
 }
 
-interface IAjaxFilePromise {
-    then(success: IAjaxFileResultCallback, error?: IAjaxFileResultCallback): IAjaxFilePromise;
-    done(success: IAjaxFileResultCallback): IAjaxFilePromise;
-    fail(error: IAjaxFileResultCallback): IAjaxFilePromise;
-    always(error: IAjaxFileResultCallback): IAjaxFilePromise;
+interface IAjaxFilePromise<T> {
+    then(success: IAjaxFileResultCallback<T>, error?: IAjaxFileResultCallback<T>): IAjaxFilePromise<T>;
+    done(success: IAjaxFileResultCallback<T>): IAjaxFilePromise<T>;
+    fail(error: IAjaxFileResultCallback<T>): IAjaxFilePromise<T>;
+    always(error: IAjaxFileResultCallback<T>): IAjaxFilePromise<T>;
 
     abord(): void;
 }
 
 interface IAjaxFileStatic {
-    send(option: IOption): IAjaxFilePromise;
+    DataType: typeof DataType;
+    send<T>(option: IOption): IAjaxFilePromise<T>;
 }
 
 declare var AjaxFile: IAjaxFileStatic;

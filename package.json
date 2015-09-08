@@ -1,6 +1,6 @@
 {
   "name": "jquery.ajaxfile",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Allow to upload file with old browser",
   "scripts": {
     "test": "node_modules/.bin/gulp test",

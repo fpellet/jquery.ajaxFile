@@ -1,6 +1,6 @@
 {
   "name": "jquery.ajaxFile",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Allow to upload file with old browser",
   "main": [
     "dist/ajaxFile.js"
