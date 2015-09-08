@@ -1,0 +1,13 @@
+﻿{
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "version": 1.5,
+  "exclude": [
+    "bin",
+    "bower_components",
+    "Demo",
+    "dist",
+    "node_modules",
+    "obj"
+  ]
+}

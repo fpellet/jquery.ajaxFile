@@ -53,6 +53,7 @@
     <None Include="tests\ResponseDocumentTest.ts" />
     <None Include="tests\UrlTest.ts" />
     <None Include="tests\UtilsTest.ts" />
+    <Content Include="tsconfig.json" />
     <None Include="typings\chai\chai.d.ts" />
     <None Include="typings\jquery\jquery.d.ts" />
     <None Include="typings\knockout\knockout.d.ts" />
