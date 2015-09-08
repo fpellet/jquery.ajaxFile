@@ -27,7 +27,7 @@ interface IAjaxFileResult<T> {
 }
 
 interface IAjaxFileResultCallback<T> {
-    (result: IAjaxFileResult<T>);
+    (result: IAjaxFileResult<T>): void;
 }
 
 interface IAjaxFilePromise<T> {
