@@ -1,7 +1,7 @@
-﻿class TimeoutResponseHandler {
+﻿class TimeoutResponseHandler<T> {
     private timeoutHandle: number;
 
-    public onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void {
+    public onReceived(option: IOption, form: Form.IForm<T>, receivedCallback: (response: IResponseDocument<T>) => void): void {
         this.dispose();
 
         if (option.timeoutInSeconds) {

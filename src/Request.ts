@@ -2,15 +2,15 @@
     return 'ajaxFile' + (new Date().getTime());
 }
 
-class Request {
+class Request<T> {
     private option: IOption;
-    private form: Form.IForm;
+    private form: Form.IForm<T>;
     private isCompleted: boolean;
-    private responseHandler: IReponseHandler;
+    private responseHandler: IReponseHandler<T>;
     private id: string;
 
-    private successCallback: IAjaxFileResultCallback;
-    private errorCallback: IAjaxFileResultCallback;
+    private successCallback: IAjaxFileResultCallback<T>;
+    private errorCallback: IAjaxFileResultCallback<T>;
 
     constructor(option: IOption) {
         this.option = option;
@@ -22,8 +22,8 @@ class Request {
         this.form = Form.createForm(this.option, this.id);
     }
 
-    public submit(): IAjaxFilePromise {
-        const promise = new AjaxFilePromise(() => this.abord(), (successCallback, errorCallback) => {
+    public submit(): IAjaxFilePromise<T> {
+        const promise = new AjaxFilePromise<T>(() => this.abord(), (successCallback, errorCallback) => {
             this.successCallback = successCallback;
             this.errorCallback = errorCallback;
         });
@@ -47,7 +47,7 @@ class Request {
         }
     }
 
-    private onResponseReceived(response: IResponseDocument): void {
+    private onResponseReceived(response: IResponseDocument<T>): void {
         if (this.isCompleted) {
             return;
         }

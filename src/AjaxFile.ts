@@ -1,5 +1,5 @@
 let ajaxFile: IAjaxFileStatic = {
-    send(option: IOption): IAjaxFilePromise {
+    send<T>(option: IOption): IAjaxFilePromise<T> {
         option = mergeWithDefaultOption(option);
 
         const request = new Request(option);

@@ -12,16 +12,16 @@ function clearCookie(name: string): void {
     document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 };
 
-class CookieReponseHandler {
+class CookieReponseHandler<T> {
     private cookieName: string;
-    private receivedCallback: (response: IResponseDocument) => void;
+    private receivedCallback: (response: IResponseDocument<T>) => void;
     private disposed: boolean;
 
     constructor(id: string) {
         this.cookieName = id;
     }
 
-    public onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void {
+    public onReceived(option: IOption, form: Form.IForm<T>, receivedCallback: (response: IResponseDocument<T>) => void): void {
         this.receivedCallback = receivedCallback;
 
         setTimeout(() => this.checkCookie(), 100);

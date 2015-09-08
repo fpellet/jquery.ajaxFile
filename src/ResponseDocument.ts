@@ -1,18 +1,18 @@
-﻿interface IResponseDocument {
-    read(desiredDataType: DataType): IAjaxFileResult;
+﻿interface IResponseDocument<T> {
+    read(desiredDataType: DataType): IAjaxFileResult<T>;
 }
 
-function createErrorResponseDocument(error: string): IResponseDocument {
+function createErrorResponseDocument<T>(error: string): IResponseDocument<T> {
     return {
-        read: (): IAjaxFileResult => {
+        read: (): IAjaxFileResult<T> => {
             throw error;
         }
     };
 };
 
-function createCookieResponseDocument(value: string): IResponseDocument {
+function createCookieResponseDocument<T>(value: string): IResponseDocument<T> {
     return {
-        read(desiredDataType: DataType): IAjaxFileResult {
+        read(desiredDataType: DataType): IAjaxFileResult<T> {
             const  data = parse(value, desiredDataType);
 
             return { status: extractStatus(), data: data };
@@ -20,7 +20,7 @@ function createCookieResponseDocument(value: string): IResponseDocument {
     };
 };
 
-class FormResponseDocument {
+class FormResponseDocument<T> {
     private document: any;
     private origineUrl: string;
 
@@ -49,7 +49,7 @@ class FormResponseDocument {
         return this.document.XMLDocument || $.isXMLDoc(this.document);
     }
 
-    public read(desiredDataType: DataType): IAjaxFileResult {
+    public read(desiredDataType: DataType): IAjaxFileResult<T> {
         const container = this.searchContainer();
 
         const status = extractStatus(container);

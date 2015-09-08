@@ -1,18 +1,18 @@
 ﻿namespace AjaxFileJQuery {
     'use strict';
 
-    function convertAjaxFilePromiseToDeferred(promise: IAjaxFilePromise, queryOption: IJQueryOption, option: IOption): JQueryDeferred<any> {
+    function convertAjaxFilePromiseToDeferred<T>(promise: IAjaxFilePromise<T>, queryOption: IJQueryOption, option: IOption): JQueryDeferred<T> {
         const deferred = $.Deferred();
 
         const eventTrigger = JQueryEventTrigger;
 
         eventTrigger.send(option, generateJqueryXHR(null, queryOption, option, promise));
 
-        promise.then((result: IAjaxFileResult) => {
+        promise.then((result: IAjaxFileResult<T>) => {
             const xhr = generateJqueryXHR(result, queryOption, option, promise);
             deferred.resolve(result.data, result.status && result.status.text, xhr);
             eventTrigger.success(option, xhr);
-        }).fail((result: IAjaxFileResult) => {
+        }).fail((result: IAjaxFileResult<T>) => {
             const xhr = generateJqueryXHR(result, queryOption, option, promise);
             deferred.reject(xhr, result.status && result.status.text, result.error);
             eventTrigger.error(option, xhr, result.error);

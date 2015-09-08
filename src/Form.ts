@@ -1,10 +1,10 @@
 ﻿namespace Form {
     'use strict';
 
-    export interface IForm {
+    export interface IForm<T> {
         onLoaded(loadCallback: () => void): void;
         submit(): void;
-        getResponseDocument(): FormResponseDocument;
+        getResponseDocument(): FormResponseDocument<T>;
         abord(): void;
         dispose(): void;
     }
@@ -15,7 +15,7 @@
         iframe: JQuery;
     }
 
-    class Form {
+    class Form<T> {
         private formFragment: IFormFragment;
         private option: IOption;
 
@@ -44,14 +44,14 @@
             this.formFragment.form.submit();
         }
 
-        public getResponseDocument(): FormResponseDocument {
+        public getResponseDocument(): FormResponseDocument<T> {
             const document = getDocumentOfIFrame(this.formFragment.iframe);
             if (!document) {
                 throw 'server abort';
             }
 
             const orgineUrl = this.formFragment.iframe.attr('origineSrc');
-            return new FormResponseDocument(document, orgineUrl);
+            return new FormResponseDocument<T>(document, orgineUrl);
         }
 
         public abord(): void {
@@ -191,8 +191,8 @@
         return form;
     };
 
-    export function createForm(option: IOption, requestId: string): IForm {
-        const form = new Form(option);
+    export function createForm<T>(option: IOption, requestId: string): IForm<T> {
+        const form = new Form<T>(option);
         form.initialize(requestId);
 
         return form;

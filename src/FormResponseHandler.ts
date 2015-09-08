@@ -1,8 +1,8 @@
-﻿class FormResponseHandler {
-    private receivedCallback: (response: IResponseDocument) => void;
-    private form: Form.IForm;
+﻿class FormResponseHandler<T> {
+    private receivedCallback: (response: IResponseDocument<T>) => void;
+    private form: Form.IForm<T>;
 
-    public onReceived(option: IOption, form: Form.IForm, receivedCallback: (response: IResponseDocument) => void): void {
+    public onReceived(option: IOption, form: Form.IForm<T>, receivedCallback: (response: IResponseDocument<T>) => void): void {
         this.form = form;
         this.form.onLoaded(() => this.onStateUpdated());
 

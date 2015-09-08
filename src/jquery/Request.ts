@@ -1,7 +1,7 @@
 ﻿namespace AjaxFileJQuery {
     'use strict';
 
-    export function generateJqueryXHR(result: IAjaxFileResult, queryOption: IJQueryOption, option: IOption, promise: IAjaxFilePromise): IJQueryXHR {
+    export function generateJqueryXHR<T>(result: IAjaxFileResult<T>, queryOption: IJQueryOption, option: IOption, promise: IAjaxFilePromise<T>): IJQueryXHR {
         result = result || {};
         const status = result.status;
         return {
